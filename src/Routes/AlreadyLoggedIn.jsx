@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { message } from "antd";
 import { useSelector } from "react-redux";
 
@@ -17,7 +17,7 @@ const AlreadyLoggedInRoute = () => {
     }
   }, [auth, navigate]);
 
-  return ok ? <Outlet /> : "loading...";
+  return ok ? <Outlet /> : null;
 };
 
 export default AlreadyLoggedInRoute;
