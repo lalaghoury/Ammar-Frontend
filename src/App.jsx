@@ -35,6 +35,7 @@ import {
   AddDressStyle,
   IsAdmin,
 } from "./comp";
+import AlreadyLoggedInRoute from "./Routes/AlreadyLoggedIn";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -193,15 +194,19 @@ function App() {
           }
         />
 
-        <Route
-          path="/sign-up"
-          element={<SignUpPage changeTheme={changeTheme} />}
-        />
+        {/* User Already LoggedIn Routes */}
 
-        <Route
-          path="/sign-in"
-          element={<SignInPage changeTheme={changeTheme} />}
-        />
+        <Route path="/" element={<AlreadyLoggedInRoute />}>
+          <Route
+            path="/sign-up"
+            element={<SignUpPage changeTheme={changeTheme} />}
+          />
+
+          <Route
+            path="/sign-in"
+            element={<SignInPage changeTheme={changeTheme} />}
+          />
+        </Route>
 
         <Route
           path="/search"

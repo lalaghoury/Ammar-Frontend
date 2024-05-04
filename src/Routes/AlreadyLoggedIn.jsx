@@ -1,15 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { message } from "antd";
 import { useSelector } from "react-redux";
 
-const AlreadyLoggedInRoute = ({ Component, ...props }) => {
+const AlreadyLoggedInRoute = () => {
   const auth = useSelector((state) => state.auth);
-  const [ok, setOk] = useState(false);
   const navigate = useNavigate();
+  const [ok, setOk] = useState(false);
 
   useEffect(() => {
-    if (auth?.user && auth?.token) {
+    if (auth?.user && auth?.verified) {
       message.info("You are already logged in. No need to do this again.");
       navigate("/");
     } else {
@@ -17,7 +17,7 @@ const AlreadyLoggedInRoute = ({ Component, ...props }) => {
     }
   }, [auth, navigate]);
 
-  return ok ? <Component {...props} /> : null;
+  return ok ? <Outlet /> : "loading...";
 };
 
 export default AlreadyLoggedInRoute;
