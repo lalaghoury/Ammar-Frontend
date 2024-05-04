@@ -398,7 +398,7 @@ const AddressList = () => {
 
   const onFinish = (values) => {
     values = { ...values, address_type: "billing" };
-    dispatch(addressThunks.addAddress(values));
+    dispatch(addressThunks.addAddress({ values, url: `/address/new` }));
   };
 
   return (

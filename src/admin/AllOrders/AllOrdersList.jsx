@@ -35,13 +35,7 @@ const AllOrdresList = () => {
       width: "70vw",
       content: (
         <>
-          <Flex className="justify-between">
-            <Title>Edit Order #{record?.order?.number}</Title>
-            <EditOutlined
-              className="cursor-pointer text-2xl"
-              onClick={() => handleEdit(record)}
-            />
-          </Flex>
+          <Title>Edit Order #{record?.order?.number}</Title>
 
           <Title level={3}>Products Summary</Title>
           <Table

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tag, Image, Select, Spin } from "antd";
+import { Table, Tag, Image, Select, Spin, Modal } from "antd";
 import Title from "antd/es/typography/Title";
 import {
   CheckCircleOutlined,
@@ -25,7 +25,10 @@ const AllUsersList = () => {
     }
 
     dispatch(
-      userThunks.updateUser({ id: record.key, values: { role, status } })
+      userThunks.updateUser({
+        values: { role, status },
+        url: `/users/admin/update/${record.key}`,
+      })
     );
 
     setEditable(null);
@@ -34,7 +37,13 @@ const AllUsersList = () => {
   };
 
   const handleDelete = (id) => {
-    console.log(id);
+    Modal.confirm({
+      title: "Are you sure you want to delete this user?",
+      content: "Once deleted, the user cannot be recovered.",
+      onOk: () => {
+        dispatch(userThunks.deleteUser({ url: `/users/admin/delete/${id}` }));
+      },
+    });
   };
 
   const columns = [
@@ -62,7 +71,7 @@ const AllUsersList = () => {
             />
           </span>
           <span style={{ flex: 1 }}>
-            <Title style={{ margin: 0 }} level={5}>
+            <Title style={{ margin: 0 }} level={5} className="cursor-pointer">
               {name.name}
             </Title>
             <p>{name.email}</p>

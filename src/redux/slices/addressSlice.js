@@ -13,10 +13,10 @@ const initialState = {
 export const addressThunks = {
   addAddress: createAsyncThunk(
     "address/addAddress",
-    async (values, { rejectWithValue }) => {
+    async ({ values, url }, { rejectWithValue }) => {
       try {
         const { data } = await axios.post(
-          `${process.env.API_URL}/address/add`,
+          `${process.env.API_URL}${url}`,
           values
         );
         if (data.success) {
@@ -31,12 +31,9 @@ export const addressThunks = {
   ),
   deleteAddress: createAsyncThunk(
     "address/deleteAddress",
-    async (addressId, { rejectWithValue }) => {
+    async ({ url }, { rejectWithValue }) => {
       try {
-        const { data } = await axios.delete(
-          `${process.env.API_URL}/address/delete`,
-          addressId
-        );
+        const { data } = await axios.delete(`${process.env.API_URL}${url}`);
         if (data.success) {
           message.success(data.message);
           return data.address._id;
@@ -49,11 +46,11 @@ export const addressThunks = {
   ),
   editAddress: createAsyncThunk(
     "address/editAddress",
-    async ({ values, addressId }, { rejectWithValue }) => {
+    async ({ values, url }, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(
-          `${process.env.API_URL}/address/edit`,
-          { values, addressId }
+        const { data } = await axios.put(
+          `${process.env.API_URL}${url}`,
+          values
         );
         if (data.success) {
           message.success(data.message);
@@ -116,7 +113,7 @@ const addressSlice = createSlice({
       .addCase(addressThunks.deleteAddress.fulfilled, (state, action) => {
         state.loading = false;
         state.data = state.data.filter(
-          (address) => address._id.toString() !== action.payload.toString()
+          (address) => address._id !== action.payload
         );
       })
       .addCase(addressThunks.deleteAddress.rejected, (state, action) => {

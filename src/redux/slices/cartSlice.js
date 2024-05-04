@@ -87,7 +87,7 @@ export const cartThunks = {
   ),
   applyCoupon: createAsyncThunk(
     "cart/applyCoupon",
-    async (couponCode, { rejectWithValue }) => {
+    async (couponCode, { dispatch, rejectWithValue }) => {
       try {
         const { data } = await axios.post(
           `${process.env.API_URL}/coupon/apply-coupon`,
@@ -97,6 +97,7 @@ export const cartThunks = {
         );
         if (data.success) {
           message.success(data.message);
+          dispatch(cartThunks.fetchCartItems());
           return data.cart;
         }
       } catch (error) {
@@ -223,7 +224,7 @@ const cartSlice = createSlice({
       })
       .addCase(cartThunks.applyCoupon.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        // state.data = action.payload;
       })
       .addCase(cartThunks.applyCoupon.rejected, (state, action) => {
         state.loading = false;

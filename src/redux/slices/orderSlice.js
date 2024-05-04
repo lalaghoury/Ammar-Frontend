@@ -50,6 +50,7 @@ export const orderThunks = {
           { status }
         );
         if (data.success) {
+          message.success(data.message);
           return data.order;
         }
       } catch (error) {

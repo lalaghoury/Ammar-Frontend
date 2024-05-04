@@ -3,6 +3,7 @@ import axios from "axios";
 import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { signin as signinAction } from "./authSlice";
 
 const initialState = {
   data: [],
@@ -11,60 +12,66 @@ const initialState = {
 };
 
 export const userThunks = {
-  getUsers: createAsyncThunk(
-    "user/getUsers",
+  getAllUsers: createAsyncThunk(
+    "user/getAllUsers",
     async (_, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/users/all`);
+        const { data } = await axios.get(
+          `${process.env.API_URL}/users/admin/all`
+        );
         if (data.success) {
           return data.users;
         }
       } catch (error) {
-        console.error("Error fetching orders:", error.response.data);
+        console.error("Error fetching users:", error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
   updateUser: createAsyncThunk(
     "user/updateUser",
-    async ({ id, values }, { rejectWithValue }) => {
+    async ({ values, url }, { dispatch, rejectWithValue }) => {
       try {
         const { data } = await axios.put(
-          `${process.env.API_URL}/users/update/${id}`,
+          `${process.env.API_URL}${url}`,
           values
         );
         if (data.success) {
+          dispatch(signinAction({ user: data.user }));
           return data.user;
         }
       } catch (error) {
-        console.error("Error fetching orders:", error.response.data);
+        console.error("Error Updating user:", error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
   deleteUser: createAsyncThunk(
     "user/deleteUser",
-    async ({ id }, { rejectWithValue }) => {
+    async ({ url }, { rejectWithValue }) => {
       try {
-        const { data } = await axios.delete(
-          `${process.env.API_URL}/users/delete/${id}`
-        );
+        const { data } = await axios.delete(`${process.env.API_URL}${url}`);
         if (data.success) {
-          return data.user;
+          message.success(data.message);
+          return data.user._id;
         }
       } catch (error) {
-        console.error("Error fetching orders:", error.response.data);
+        console.error("Error deleting user:", error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
 };
 
-export const useUserEffect = () => {
+export const useUserEffect = (type) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(userThunks.getUsers());
+    if (type === "get-user") {
+      dispatch(userThunks.getPresentUser());
+    } else {
+      dispatch(userThunks.getAllUsers());
+    }
   }, [dispatch]);
 };
 
@@ -74,14 +81,14 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(userThunks.getUsers.pending, (state) => {
+      .addCase(userThunks.getAllUsers.pending, (state) => {
         state.loading = true;
       })
-      .addCase(userThunks.getUsers.fulfilled, (state, action) => {
+      .addCase(userThunks.getAllUsers.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(userThunks.getUsers.rejected, (state, action) => {
+      .addCase(userThunks.getAllUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         message.error(action.payload);
@@ -108,9 +115,7 @@ const userSlice = createSlice({
       })
       .addCase(userThunks.deleteUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = state.data.filter(
-          (user) => user._id !== action.payload._id
-        );
+        state.data = state.data.filter((user) => user._id !== action.payload);
       })
       .addCase(userThunks.deleteUser.rejected, (state, action) => {
         state.loading = false;

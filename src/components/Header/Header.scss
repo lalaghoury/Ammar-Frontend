@@ -80,16 +80,15 @@
   display: none;
 }
 
-:where(.css-dev-only-do-not-override-1pppmz6).ant-badge .ant-badge-count,
-:where(.css-dev-only-do-not-override-1pppmz6).ant-badge .ant-badge-dot,
-:where(.css-dev-only-do-not-override-1pppmz6).ant-badge
-  .ant-scroll-number-custom-component {
-  position: absolute;
-  top: -8px;
-  left: 6px;
-  inset-inline-end: 0;
-  transform: translate(50%, -50%);
-  transform-origin: 100% 0%;
+.nav-badge {
+  .ant-badge-count {
+    position: absolute;
+    top: -8px !important;
+    left: 8px !important;
+    inset-inline-end: 0;
+    transform: translate(50%, -50%);
+    transform-origin: 100% 0%;
+  }
 }
 
 .ant-collapse-header {

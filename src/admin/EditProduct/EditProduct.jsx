@@ -123,7 +123,7 @@ const EditProduct = () => {
 
   const checkDirtyness = (values, product, form) => {
     const formFieldsHaveChanged = Object.keys(values)
-      .filter((field) => field !== "images") // don't check images
+      .filter((field) => field !== "images") 
       .some((field) => {
         const formValue = form.getFieldValue(field);
         const productValue = product[field];

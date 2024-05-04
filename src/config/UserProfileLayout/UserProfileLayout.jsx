@@ -77,7 +77,7 @@ const UserProfileLayout = () => {
         </Header>
         <Layout>
           <Sider width="25%" style={siderStyle}>
-            <CommonHeading text={`Hello ${auth?.user?.name}`} />
+            <CommonHeading text={`Hello ${auth?.user?.name.split(" ")[0]}`} />
             <Paragraph className="m-0">Welcome to your Account</Paragraph>
             <Flex className="mt-30" vertical gap={20}>
               <Link to={"/profile/my-orders"}>
