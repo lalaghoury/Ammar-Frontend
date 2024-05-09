@@ -107,11 +107,7 @@ export const useProductEffect = () => {
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {
-    updateProductState: (state, action) => {
-      state.data = action.payload.products;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(productThunks.getAllProducts.pending, (state) => {
@@ -165,6 +161,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { updateAddressState } = productSlice.actions;
+export const {} = productSlice.actions;
 
 export default productSlice.reducer;

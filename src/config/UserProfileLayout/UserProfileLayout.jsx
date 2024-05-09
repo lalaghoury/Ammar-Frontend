@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import CommonHeading from "../../components/CommonHeading/CommonHeading";
-import { Layout, Breadcrumb, Divider, Flex } from "antd";
+import { Layout, Breadcrumb, Divider, Flex, message } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Paragraph from "antd/es/typography/Paragraph";
 import { HeartOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { signout as signoutAction } from "../../redux/slices/authSlice";
+import { authThunks } from "../../redux/slices/authSlice";
 
 const { Header, Sider, Content } = Layout;
 
@@ -35,8 +35,8 @@ const UserProfileLayout = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const handleSignout = () => {
-    dispatch(signoutAction());
+  const handleSignout = async () => {
+    dispatch(authThunks.signout());
   };
 
   useEffect(() => {
@@ -83,19 +83,18 @@ const UserProfileLayout = () => {
               <Link to={"/profile/my-orders"}>
                 <Flex gap={15} className="h-11 items-center">
                   <div
+                    className="w-[2px] h-11 "
                     style={{
-                      width: "2px",
-                      height: "44px",
                       borderLeft: word
                         ?.split(" ")[1]
                         ?.toLowerCase()
-                        .includes("orders")
+                        .includes("orders") || word?.split(" ")[1]?.toLowerCase() === "details"
                         ? "2px solid #3C4242"
                         : "",
                       background: word
                         ?.split(" ")[1]
                         ?.toLowerCase()
-                        .includes("orders")
+                        .includes("orders") || word?.split(" ")[1]?.toLowerCase() === "details"
                         ? "#3C4242"
                         : "",
                     }}

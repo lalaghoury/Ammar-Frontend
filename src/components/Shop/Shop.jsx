@@ -11,14 +11,13 @@ import {
   Button,
   Collapse,
 } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import "./Shop.scss";
 import { DownOutlined } from "@ant-design/icons";
 import WishlistButton from "../WishlistButton";
 import CommonHeading from "../CommonHeading/CommonHeading";
 import FooterUser from "../Footer/Footer";
-import AddToCartButton from "../AddToCart";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -31,6 +30,10 @@ const Shop = () => {
   const [colors, setColors] = useState([]);
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [DressStyleNames, setDressStyleNames] = useState([]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mouseLeaveDelay, setMouseLeaveDelay] = useState(null);
+  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,10 +250,6 @@ const Shop = () => {
     },
   ];
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseLeaveDelay, setMouseLeaveDelay] = useState(null);
-  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
-
   const handleMouseMove = (index, e) => {
     const offsetX = e.pageX;
     const offsetY = e.pageY;
@@ -350,25 +349,17 @@ const Shop = () => {
                     }}
                   >
                     <Image
+                      className="hover:scale-110 ease-in-out duration-500 rounded-lg object-cover"
+                      onClick={() => navigate(`/product/${product?._id}`)}
                       src={product?.images[0]?.url}
                       alt={product.name}
                       width={282}
                       height={370}
                       preview={false}
-                      style={{
-                        borderRadius: "8px",
-                        objectFit: "cover",
-                      }}
-                      className="hover:scale-110 ease-in-out duration-500"
                     />
                     <WishlistButton
                       wishlists={product?.wishlists}
                       productId={product?._id}
-                    />
-                    <AddToCartButton
-                      productId={product?._id}
-                      price={product?.price}
-                      quantity={1}
                     />
                     <div className="flex justify-between items-center mt-[30px] px-1">
                       <div

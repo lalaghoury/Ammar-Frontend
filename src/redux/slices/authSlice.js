@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { message } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
@@ -41,27 +41,37 @@ export const useAuthActions = () => {
 
   const signout = async () => {
     try {
-      const response = await axios.post(`${process.env.API_URL}/auth/signout`);
-      const data = response.data;
+      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
       if (data.success) {
         message.success(data.message, 1, () => {
           dispatch(signoutAction());
         });
       }
     } catch (error) {
-      message.error(
-        error.response.data.message
-          ? error.response.data.message
-          : "Something went wrong"
-      );
-      console.log(error.response.data);
+      message.error(error.response.data.message);
+      console.log(error.response.data.message);
     }
   };
 
   return { signin, signout };
 };
 
-export const authThunks = {};
+export const authThunks = {
+  signout: createAsyncThunk("auth/signout", async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
+      if (data.success) {
+        message.success(data.message, 1, () => {
+          dispatch(signoutAction());
+        });
+        return true;
+      }
+    } catch (error) {
+      console.error("Error logging out:", error.response.data.message);
+      return rejectWithValue(error.response.data.message);
+    }
+  }),
+};
 
 export const useAuthEffect = () => {
   const dispatch = useDispatch();

@@ -12,8 +12,9 @@ import emptyCart from "../../assets/images/emptyCart.png";
 const CartPage = () => {
   useCartEffect();
   const dispatch = useDispatch();
-  const { data: cart, loading } = useSelector((state) => state.cart);
+  const state = useSelector((state) => state.cart);
   const [couponCode, setCouponCode] = useState("");
+  const { data: cart, loading } = state;
 
   const handleUpdateQuantity = (productId, quantity, price) => {
     dispatch(cartThunks.updateQuantity({ productId, quantity, price }));
@@ -27,6 +28,15 @@ const CartPage = () => {
     dispatch(cartThunks.applyCoupon(couponCode));
     setCouponCode("");
   };
+
+  if (!cart.items)
+    return (
+      <Spin
+        size="large"
+        className="w-full h-screen flex items-center justify-center"
+        spinning={loading}
+      />
+    );
 
   return (
     <Spin spinning={loading} tip="Loading...">
@@ -46,25 +56,14 @@ const CartPage = () => {
                     dataIndex: "productId",
                     key: "details",
                     render: (productId) => (
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "12px",
-                          alignItems: "center",
-                          width: "100%",
-                          justifyContent: "space-between",
-                        }}
-                      >
+                      <div className="flex gap-3 items-center justify-between w-full">
                         <span style={{ width: 90 }}>
                           <Image
-                            src={productId?.images[0]?.url}
+                            src={productId?.thumbnail}
                             alt={productId?.name}
                             width={90}
                             height={90}
-                            style={{
-                              objectFit: "center",
-                              borderRadius: "9px",
-                            }}
+                            className="rounded-[9px] object-center"
                             fallback="https://via.placeholder.com/90x90"
                           />
                         </span>
@@ -180,7 +179,7 @@ const CartPage = () => {
             </Flex>
           </div>
         ) : (
-          !loading && !cart?.items?.length && <EmptyCart />
+          <EmptyCart />
         )}
       </AppLayout>
     </Spin>

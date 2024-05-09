@@ -232,6 +232,11 @@ const AllOrdresList = () => {
                 },
                 {
                   key: 3,
+                  label: <strong>Billing Address</strong>,
+                  value: `${record?.fullOrder?.billing_address?.address_line_1} ${record?.fullOrder?.billing_address?.address_line_2} ${record?.fullOrder?.billing_address?.appartment} ${record?.fullOrder?.billing_address?.city} ${record?.fullOrder?.billing_address?.state} ${record?.fullOrder?.billing_address?.country} ${record?.fullOrder?.billing_address?.pincode} ${record?.fullOrder?.billing_address?.phone}`,
+                },
+                {
+                  key: 4,
                   label: <strong>Order Date</strong>,
                   value: new Intl.DateTimeFormat("en-US", {
                     year: "numeric",
@@ -243,7 +248,7 @@ const AllOrdresList = () => {
                   }).format(new Date(record?.fullOrder?.createdAt)),
                 },
                 {
-                  key: 4,
+                  key: 5,
                   label: <strong>Status</strong>,
                   value: (
                     <>
@@ -272,7 +277,7 @@ const AllOrdresList = () => {
                   ),
                 },
                 {
-                  key: 5,
+                  key: 6,
                   label: <strong>Payment Method</strong>,
                   value: (
                     <Flex gap={5} className="items-center">
@@ -393,8 +398,8 @@ const AllOrdresList = () => {
               amount: orderObj?.amount,
             },
             payment: {
-              image: orderObj?.payment?.creditCard?.imageUrl,
-              name: orderObj?.payment?.creditCard?.cardType,
+              image: orderObj?.payment?.imageUrl,
+              name: orderObj?.payment?.cardType,
             },
             fullOrder: orderObj,
           }))}

@@ -14,15 +14,19 @@ const initialState = {
 export const cartThunks = {
   addToCart: createAsyncThunk(
     "cart/addToCart",
-    async ({ productId, quantity = 1, price }, { rejectWithValue }) => {
+    async (
+      { productId, quantity = 1, price, color, size },
+      { rejectWithValue }
+    ) => {
       try {
         const { data } = await axios.post(`${process.env.API_URL}/cart/add`, {
           productId,
           quantity,
           price,
+          color,
+          size,
         });
         if (data.success) {
-          console.log("🚀 ~ data.cart: ", data.cart);
           message.success(data.message);
           return data.cart;
         }
@@ -109,7 +113,7 @@ export const cartThunks = {
   handlePayment: createAsyncThunk(
     "cart/handlePayment",
     async (
-      { nonce, amount, products, shipping_address, navigate },
+      { nonce, amount, products, shipping_address, billing_address, navigate },
       { rejectWithValue }
     ) => {
       try {
@@ -120,6 +124,7 @@ export const cartThunks = {
             amount,
             products,
             shipping_address,
+            billing_address,
           }
         );
         if (data.success) {
@@ -237,6 +242,7 @@ const cartSlice = createSlice({
       .addCase(cartThunks.handlePayment.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
+        state.count = 0;
       })
       .addCase(cartThunks.handlePayment.rejected, (state, action) => {
         state.loading = false;

@@ -9,6 +9,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Space,
   Spin,
   Table,
   Tooltip,
@@ -50,13 +51,14 @@ const currencies = [
 const AddProduct = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [description, setDescription] = useState("");
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [DressStyleNames, setDressStyleNames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const response = await axios.get(
         `${process.env.API_URL}/categories/names`
       );
@@ -81,6 +83,7 @@ const AddProduct = () => {
 
   const onFinish = async (values) => {
     try {
+      setLoading(true);
       values.handle = values.handle.replace(/\s+/g, "-").replace(/[\s-]+$/, "");
       values.sku = values.sku.replace(/\s/g, "");
       if (!values.sku) {
@@ -101,11 +104,9 @@ const AddProduct = () => {
     } catch (error) {
       console.log(error);
       message.error("Something went wrong", 1.5);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const onDescriptionChange = (value) => {
-    setDescription(value);
   };
 
   return (
@@ -193,10 +194,7 @@ const AddProduct = () => {
               ]}
               style={{ width: "100%" }}
             >
-              <ProductDescriptionInput
-                value={description}
-                onChange={onDescriptionChange}
-              />
+              <ProductDescriptionInput />
             </Form.Item>
 
             {/* Tags */}
@@ -296,7 +294,10 @@ const AddProduct = () => {
             name={"images"}
             label={<Title level={5}>Images</Title>}
           >
-            <ImageInput />
+            <ImageInput
+              selectedThumbnail={selectedThumbnail}
+              setSelectedThumbnail={setSelectedThumbnail}
+            />
           </Form.Item>
 
           <Title level={5}>Stock & inventory</Title>
@@ -452,7 +453,7 @@ const AddProduct = () => {
               <Button onClick={handleCancel}>Cancel</Button>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button loading={loading} type="primary" htmlType="submit">
                 Add Product
               </Button>
             </Form.Item>
@@ -463,9 +464,9 @@ const AddProduct = () => {
   );
 };
 
-export const ProductDescriptionInput = ({ value, onChange }) => {
+export const ProductDescriptionInput = ({ value = "", onChange }) => {
   const handleChange = (value) => {
-    onChange(value);
+    onChange?.(value);
   };
 
   return (
@@ -478,9 +479,13 @@ export const ProductDescriptionInput = ({ value, onChange }) => {
   );
 };
 
-export const ImageInput = ({ value = [], onChange }) => {
+export const ImageInput = ({
+  value = [],
+  onChange,
+  selectedThumbnail,
+  setSelectedThumbnail,
+}) => {
   const [selectedImages, setSelectedImages] = useState([]);
-  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const triggerAdd = (addedImages) => {
@@ -514,7 +519,7 @@ export const ImageInput = ({ value = [], onChange }) => {
       return uniqueFileName;
     };
 
-    const existingFileNames = new Set(images.map((file) => file.name));
+    const existingFileNames = new Set(value.map((file) => file.name));
     const uniqueFileName = getUniqueFileName(file.name, existingFileNames);
 
     const updatedFile = new File([file], uniqueFileName, { type: file.type });
@@ -539,44 +544,34 @@ export const ImageInput = ({ value = [], onChange }) => {
     }
 
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${process.env.API_URL}/images`,
         formData
       );
-      const data = response.data;
       if (data.success) {
         triggerAdd(data.images);
-        const newImages = data.images.map((imgObj) => ({
-          url: imgObj.url,
-          name: imgObj.name,
-        }));
-        setImages([...images, ...newImages]);
         setSelectedImages([]);
-        setLoading(false);
-      } else {
-        message.error("Failed to upload images");
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error uploading images:", error);
       message.error("Error uploading images");
+    } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = (record) => {
-    setImages(
-      images.filter(
-        (imgObj) => imgObj.url !== record.url && imgObj.name !== record.name
-      )
-    );
     triggerDelete(images.findIndex((imgObj) => imgObj.url === record.url));
+  };
+
+  const handleSetThumbnail = (record) => {
+    setSelectedThumbnail(record.url);
   };
 
   return (
     <Flex vertical gap={30}>
       <Table
-        dataSource={images.map((imgObj) => ({
+        dataSource={value.map((imgObj) => ({
           key: imgObj.url,
           url: imgObj.url,
           name: imgObj.name,
@@ -596,6 +591,21 @@ export const ImageInput = ({ value = [], onChange }) => {
             render: (name) => {
               return name;
             },
+          },
+          {
+            title: "Thumbnail",
+            render: (_, record) => (
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSetThumbnail(record)}
+                  disabled={selectedThumbnail === record.url}
+                >
+                  Set as Thumbnail
+                </Button>
+                {selectedThumbnail === record.url && <span>Thumbnail Set</span>}
+              </Space>
+            ),
           },
           {
             title: "Action",
@@ -677,24 +687,28 @@ export const ColorsInput = ({ value = [], onChange }) => {
     { colorName: "Blue", backgroundColor: "#3FDEFF" },
   ];
 
+  useEffect(() => {
+    colors.forEach((color) => {
+      const divElement = document.getElementById(color.colorName);
+      const divChildElement = document.querySelector(
+        `#${color.colorName} #${color.colorName}`
+      );
+      if (value.includes(color.colorName)) {
+        divElement.style.color = "#8a33fd";
+        divChildElement.style.border = "#ddd dashed 3px";
+      } else {
+        divElement.style.color = "";
+        divChildElement.style.border = "";
+      }
+    });
+  }, [colors, value]);
+
   const handleColorClick = (addedColor) => {
     const newColors = value.includes(addedColor)
       ? value.filter((color) => color !== addedColor)
       : [...value, addedColor];
 
     onChange?.(newColors);
-
-    const divElement = document.getElementById(`${addedColor}`);
-    const divChildElement = document.querySelector(
-      `#${addedColor} #${addedColor}`
-    );
-    if (value.includes(addedColor)) {
-      divElement.style.color = "";
-      divChildElement.style.border = "";
-    } else {
-      divElement.style.color = "#8a33fd";
-      divChildElement.style.border = "#ddd dashed 3px";
-    }
   };
 
   return (
@@ -726,21 +740,27 @@ export const ColorsInput = ({ value = [], onChange }) => {
 };
 
 export const SizesInput = ({ value = [], onChange }) => {
+  const sizes = ["XXS", "XL", "XS", "S", "M", "L", "XXL", "3XL", "4XL"];
+
+  useEffect(() => {
+    sizes.forEach((size) => {
+      const divElement = document.getElementById(`${size}`);
+      if (value.includes(size)) {
+        divElement.style.backgroundColor = "#807d7e";
+        divElement.style.color = "#fff";
+      } else {
+        divElement.style.backgroundColor = "#fff";
+        divElement.style.color = "#807d7e";
+      }
+    });
+  }, [value, sizes]);
+
   const handleSizeClick = (addedSize) => {
     const newSizes = value.includes(addedSize)
       ? value.filter((color) => color !== addedSize)
       : [...value, addedSize];
 
     onChange?.(newSizes);
-
-    const divElement = document.getElementById(`${addedSize}`);
-    if (value.includes(addedSize)) {
-      divElement.style.backgroundColor = "#fff";
-      divElement.style.color = "#807d7e";
-    } else {
-      divElement.style.backgroundColor = "#807d7e";
-      divElement.style.color = "#fff";
-    }
   };
 
   return (
@@ -749,7 +769,7 @@ export const SizesInput = ({ value = [], onChange }) => {
         Sizes
       </Title>
       <div className={`flex gap-[20px] flex-wrap`}>
-        {["XXS", "XL", "XS", "S", "M", "L", "XXL", "3XL", "4XL"].map((size) => (
+        {sizes.map((size) => (
           <div
             className="text-[#3C4242] flex justify-center items-center w-[58px] h-9 rounded-lg border-solid border-2 border-[#BEBCBD] cursor-pointer item"
             onClick={() => handleSizeClick(size)}

@@ -9,6 +9,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Space,
   Table,
   Tooltip,
   Typography,
@@ -27,8 +28,13 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import {
+  ColorsInput,
+  ImageInput,
+  ProductDescriptionInput,
+  SizesInput,
+} from "../AllProducts/AddProduct";
 const { Title } = Typography;
-const { Dragger } = Upload;
 const { Option } = Select;
 
 const currencies = [
@@ -49,60 +55,64 @@ const currencies = [
 const EditProduct = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [description, setDescription] = useState("");
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [product, setProduct] = useState({});
   const [DressStyleNames, setDressStyleNames] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-
-  const fetchData = async () => {
-    if (!id || id === ":id") {
-      return navigate("/dashboard/products/products-list");
-    } else {
-      const response = await axios.get(
-        `${process.env.API_URL}/categories/names`
-      );
-      if (response.data.success) {
-        setCategoriesNames(response.data.categoriesNames);
-      }
-      const response2 = await axios.get(
-        `${process.env.API_URL}/dress-styles/names`
-      );
-      if (response2.data.success) {
-        setDressStyleNames(response2.data.DressStylesNames);
-      }
-      const res3 = await axios.get(`${process.env.API_URL}/products/${id}`);
-      if (res3.data.success) {
-        const product = await res3.data.product;
-        setProduct(product);
-        form.setFieldsValue({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          quantity: product.quantity,
-          handle: product.handle,
-          sku: product.sku,
-          tags: product.tags,
-          category: product.category,
-          dressStyle: product.dressStyle,
-          allow_backorder: product.allow_backorder,
-          height: product.height,
-          width: product.width,
-          length: product.length,
-          weight: product.weight,
-          currency: product.currency,
-          barcode: product.barcode,
-          images: product.images,
-          colors: product.colors,
-          sizes: product.sizes,
-        });
-      }
-      setLoading(false);
-    }
-  };
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { data: categoryData } = await axios.get(
+          `${process.env.API_URL}/categories/names`
+        );
+        if (categoryData.success) {
+          setCategoriesNames(categoryData.categoriesNames);
+        }
+        const { data: dressData } = await axios.get(
+          `${process.env.API_URL}/dress-styles/names`
+        );
+        if (dressData.success) {
+          setDressStyleNames(dressData.DressStylesNames);
+        }
+        const { data: productData } = await axios.get(
+          `${process.env.API_URL}/products/${id}`
+        );
+        if (productData.success) {
+          const product = await productData.product;
+          setProduct(product);
+          setSelectedThumbnail(product.thumbnail);
+          form.setFieldsValue({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            quantity: product.quantity,
+            handle: product.handle,
+            sku: product.sku,
+            tags: product.tags,
+            category: product.category,
+            dressStyle: product.dressStyle,
+            allow_backorder: product.allow_backorder,
+            height: product.height,
+            width: product.width,
+            length: product.length,
+            weight: product.weight,
+            currency: product.currency,
+            barcode: product.barcode,
+            images: product.images,
+            colors: product.colors,
+            sizes: product.sizes,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
 
@@ -123,7 +133,7 @@ const EditProduct = () => {
 
   const checkDirtyness = (values, product, form) => {
     const formFieldsHaveChanged = Object.keys(values)
-      .filter((field) => field !== "images") 
+      .filter((field) => field !== "images")
       .some((field) => {
         const formValue = form.getFieldValue(field);
         const productValue = product[field];
@@ -147,7 +157,10 @@ const EditProduct = () => {
       try {
         const response = await axios.put(
           `${process.env.API_URL}/products/edit/${id}`,
-          values
+          {
+            ...values,
+            thumbnail: selectedThumbnail,
+          }
         );
         const data = await response.data;
         if (data.success) {
@@ -165,10 +178,6 @@ const EditProduct = () => {
       message.warning("No changes have been made!");
       setLoading(false);
     }
-  };
-
-  const onDescriptionChange = (value) => {
-    setDescription(value);
   };
 
   return (
@@ -248,10 +257,7 @@ const EditProduct = () => {
           rules={[{ required: true, message: "Please enter a description" }]}
           style={{ width: "100%" }}
         >
-          <ProductDescriptionInput
-            value={description}
-            onChange={onDescriptionChange}
-          />
+          <ProductDescriptionInput />
         </Form.Item>
 
         <Divider />
@@ -296,7 +302,10 @@ const EditProduct = () => {
           name={"images"}
           label={<Title level={5}>Images</Title>}
         >
-          <ImageInput />
+          <ImageInput
+            selectedThumbnail={selectedThumbnail}
+            setSelectedThumbnail={setSelectedThumbnail}
+          />
         </Form.Item>
 
         <Divider />
@@ -480,296 +489,6 @@ const EditProduct = () => {
           </Form.Item>
         </Flex>
       </Form>
-    </div>
-  );
-};
-
-const ProductDescriptionInput = ({ value, onChange }) => {
-  const handleChange = (value) => {
-    onChange(value);
-  };
-
-  return (
-    <ReactQuill
-      value={value}
-      onChange={handleChange}
-      placeholder="Enter product description"
-      className="custom-quill"
-    />
-  );
-};
-
-const ImageInput = ({ value = [], onChange }) => {
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { id } = useParams();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!id || id === ":id") {
-        return;
-      }
-      try {
-        const res = await axios.get(`${process.env.API_URL}/products/${id}`);
-        if (res.data.success) {
-          setImages(res.data.product.images);
-        }
-      } catch (error) {
-        console.error("Error fetching images:", error.response.data.message);
-        message.error("Error fetching images");
-      }
-    };
-    fetchData();
-  }, [id]);
-
-  const triggerAdd = (addedImages) => {
-    const newImages = [...value, ...addedImages];
-    onChange?.(newImages);
-  };
-
-  const triggerDelete = (deletedImageIndex) => {
-    const newImages = [...value];
-    newImages.splice(deletedImageIndex, 1);
-    onChange?.(newImages);
-  };
-
-  const beforeUpload = (file) => {
-    const isImage = file.type.startsWith("image/");
-    if (!isImage) {
-      message.error("You can only upload image files!");
-      return false;
-    }
-
-    const getUniqueFileName = (fileName, existingFileNames) => {
-      let uniqueFileName = fileName;
-      let counter = 1;
-      while (existingFileNames.has(uniqueFileName)) {
-        const extensionIndex = fileName.lastIndexOf(".");
-        const nameWithoutExtension = fileName.slice(0, extensionIndex);
-        const extension = fileName.slice(extensionIndex);
-        uniqueFileName = `${nameWithoutExtension}${counter}${extension}`;
-        counter++;
-      }
-      return uniqueFileName;
-    };
-
-    const existingFileNames = new Set(images.map((file) => file.name));
-    const uniqueFileName = getUniqueFileName(file.name, existingFileNames);
-
-    const updatedFile = new File([file], uniqueFileName, { type: file.type });
-
-    setSelectedImages((prevImages) => [...prevImages, updatedFile]);
-
-    return false;
-  };
-
-  const handleUpload = async () => {
-    setLoading(true);
-
-    if (selectedImages.length === 0) {
-      message.error("No image selected");
-      setLoading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    for (const image of selectedImages) {
-      formData.append("images", image);
-    }
-
-    try {
-      const response = await axios.post(
-        `${process.env.API_URL}/images`,
-        formData
-      );
-      const data = response.data;
-      if (data.success) {
-        triggerAdd(data.images);
-        const newImages = data.images.map((imgObj) => ({
-          url: imgObj.url,
-          name: imgObj.name,
-        }));
-        setImages([...images, ...newImages]);
-        setSelectedImages([]);
-        setLoading(false);
-      } else {
-        message.error("Failed to upload images");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error uploading images:", error.response.data.message);
-      message.error("Error uploading images");
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = (record) => {
-    setImages(
-      images.filter(
-        (imgObj) => imgObj.url !== record.url && imgObj.name !== record.name
-      )
-    );
-    triggerDelete(images.findIndex((imgObj) => imgObj.url === record.url));
-  };
-
-  return (
-    <>
-      <Flex vertical gap={30}>
-        <Table
-          dataSource={images.map((imgObj) => ({
-            key: imgObj.url,
-            url: imgObj.url,
-            name: imgObj.name,
-          }))}
-          pagination={false}
-          columns={[
-            {
-              title: "Image",
-              dataIndex: "url",
-              render: (url) => (
-                <Image src={url} alt="avatar" width={50} height={50} />
-              ),
-            },
-            {
-              title: "File name",
-              dataIndex: "name",
-              render: (name) => {
-                return name;
-              },
-            },
-            {
-              title: "Action",
-              dataIndex: "url",
-              render: (_, record) => (
-                <Button
-                  type="warning"
-                  icon={<DeleteOutlined />}
-                  disabled={loading}
-                  onClick={() => handleDelete(record)}
-                />
-              ),
-            },
-          ]}
-        />
-
-        <Dragger
-          multiple={true}
-          beforeUpload={beforeUpload}
-          onChange={handleUpload}
-          showUploadList={false}
-          accept="image/*"
-          maxCount={7}
-          style={{ border: "2px dashed rgba(0,0,0,0.1)", opacity: 1 }}
-        >
-          <>
-            {loading ? (
-              <Flex
-                gap={4}
-                align="center"
-                justify="center"
-                style={{ height: 200 }}
-              >
-                <span>Uploading image(s)...</span>
-                <LoadingOutlined style={{ fontSize: 64 }} />
-              </Flex>
-            ) : (
-              <Flex
-                gap={4}
-                align="center"
-                justify="center"
-                style={{ height: 200 }}
-              >
-                <p className="ant-upload-drag-icon">
-                  <Avatar size={64}>
-                    <CloudUploadOutlined style={{ fontSize: 32 }} />
-                  </Avatar>
-                </p>
-                <Flex vertical gap={4}>
-                  <p className="ant-upload-text">
-                    Click or upload or drag and drop
-                  </p>
-                  <p className="ant-upload-hint">
-                    (SVG, JPG, PNG, or gif maximum 900x400)
-                  </p>
-                </Flex>
-              </Flex>
-            )}
-          </>
-        </Dragger>
-      </Flex>
-    </>
-  );
-};
-
-const ColorsInput = ({ value = [], onChange }) => {
-  const colors = [
-    { colorName: "Purple", backgroundColor: "#8434E1" },
-    { colorName: "Black", backgroundColor: "#252525" },
-    { colorName: "Red", backgroundColor: "#F35528" },
-    { colorName: "Orange", backgroundColor: "#F16F2B" },
-    { colorName: "Navy", backgroundColor: "#345EFF" },
-    { colorName: "White", backgroundColor: "#FFF" },
-    { colorName: "Broom", backgroundColor: "#D67E3B" },
-    { colorName: "Green", backgroundColor: "#48BC4E" },
-    { colorName: "Yellow", backgroundColor: "#FDC761" },
-    { colorName: "Grey", backgroundColor: "#E4E5E8" },
-    { colorName: "Pink", backgroundColor: "#E08D9D" },
-    { colorName: "Blue", backgroundColor: "#3FDEFF" },
-  ];
-
-  const handleColorClick = (addedColor) => {
-    const newColors = [...value, addedColor];
-    onChange?.(newColors);
-  };
-
-  return (
-    <div>
-      <Title level={5} className="!mb-5">
-        Colors
-      </Title>
-      <div className="flex flex-wrap items-center gap-4">
-        {colors.map((color, index) => (
-          <div
-            className="color-swatch flex flex-col items-center justify-center gap-2 item"
-            onClick={() => handleColorClick(color.colorName)}
-            key={index}
-          >
-            <div
-              className="color-block w-12 h-12 rounded-xl cursor-pointer "
-              style={{ backgroundColor: color.backgroundColor }}
-            />
-            <div className="color-name text-sm font-semibold cursor-pointer">
-              {color.colorName}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SizesInput = ({ value = [], onChange }) => {
-  const handleSizeClick = (addedSize) => {
-    const newSizes = [...value, addedSize];
-    onChange?.(newSizes);
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-between">
-      <Title level={5} className="!mb-5">
-        Colors
-      </Title>
-      <div className={`flex gap-[20px] flex-wrap`}>
-        {["XXS", "XL", "XS", "S", "M", "L", "XXL", "3XL", "4XL"].map((size) => (
-          <div
-            className="text-[#3C4242] flex justify-center items-center w-[58px] h-9 rounded-lg border-solid border-2 border-[#BEBCBD] cursor-pointer item"
-            onClick={() => handleSizeClick(size)}
-          >
-            {size}
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

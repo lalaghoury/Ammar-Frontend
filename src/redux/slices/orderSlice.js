@@ -31,7 +31,7 @@ export const orderThunks = {
     "orders/getAllOrders",
     async (_, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/orders/all`);
+        const { data } = await axios.get(`${process.env.API_URL}/orders/admin/all`);
         if (data.success) {
           return data.orders;
         }

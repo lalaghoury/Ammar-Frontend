@@ -49,7 +49,7 @@ export const wishlsitThunks = {
   ),
   removeFromWishlist: createAsyncThunk(
     "products/removeFromWishlist",
-    async (productId, { rejectWithValue }) => {
+    async ({productId}, { rejectWithValue }) => {
       try {
         const { data } = await axios.post(
           `${process.env.API_URL}/products/remove-from-wishlist/${productId}`

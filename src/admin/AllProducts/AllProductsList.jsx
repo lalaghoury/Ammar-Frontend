@@ -30,7 +30,7 @@ const AllProductsList = () => {
           key: product._id,
           name: {
             name: product.name,
-            images: product.images,
+            thumbnail: product.thumbnail,
             category: product.category,
           },
           sku: product.sku,
@@ -55,7 +55,7 @@ const AllProductsList = () => {
                 <span style={{ width: 90 }}>
                   {" "}
                   <Image
-                    src={name.images[0].url}
+                    src={name.thumbnail}
                     alt={name.name}
                     width={90}
                     height={90}

@@ -1,6 +1,7 @@
 // Layouts
 import UserProfileLayout from "./config/UserProfileLayout/UserProfileLayout";
 import AdminLayout from "./config/AdminLayout/AdminLayout";
+import MainLayout from "./config/MainLayout/MainLayout";
 
 // Admin Part
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
@@ -31,6 +32,7 @@ import MyInfo from "./pages/UserProfilePage/MyInfo";
 import PrivateRoute from "./Routes/Private";
 import LoginSuccess from "./Routes/LoginSuccess";
 import IsAdmin from "./Routes/IsAdmin";
+import AlreadyLoggedInRoute from "./Routes/AlreadyLoggedIn";
 
 // Components
 import Header from "./components/Header/Header";
@@ -71,4 +73,6 @@ export {
   AllDressStylesList,
   AddDressStyle,
   IsAdmin,
+  AlreadyLoggedInRoute,
+  MainLayout,
 };

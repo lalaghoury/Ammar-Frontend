@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { userThunks } from "../../redux/slices/userSlice";
 import Title from "antd/es/typography/Title";
 import { LoadingOutlined } from "@ant-design/icons";
+import { AddAddressForm } from "../CheckoutPage/CheckoutPage";
 
 const MyInfo = () => {
   return (
@@ -281,6 +282,21 @@ const AddressDetails = () => {
     });
   };
 
+  const onFinish = (values) => {
+    dispatch(
+      addressThunks.editAddress({
+        values,
+        url: `/address/update/${values._id}`,
+      })
+    );
+    !loading && form.resetFields() && Modal.destroyAll();
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    Modal.destroyAll();
+  };
+
   const handleEdit = (address) => {
     Modal.info({
       title: "Editing Address",
@@ -289,18 +305,19 @@ const AddressDetails = () => {
         <>
           <Title level={3}>Editing your {address.address_type} Address</Title>
 
-          <Form
+          <AddAddressForm
+            onFinish={onFinish}
+            initialValues={address}
+            loading={loading}
+            handleCancel={handleCancel}
+            text={"Update Address"}
+          />
+
+          {/* <Form
             name="billing-details-form"
             form={form}
             layout="vertical"
-            onFinish={(values) => {
-              dispatch(
-                addressThunks.editAddress({
-                  values,
-                  url: `/address/update/${address._id}`,
-                })
-              );
-            }}
+            onFinish={onFinish}
             initialValues={{ ...address }}
           >
             <Flex gap={20} justify="space-between">
@@ -473,7 +490,7 @@ const AddressDetails = () => {
                 <Button onClick={() => Modal.destroyAll()}>Cancel</Button>
               </Form.Item>
             </Flex>
-          </Form>
+          </Form> */}
         </>
       ),
     });

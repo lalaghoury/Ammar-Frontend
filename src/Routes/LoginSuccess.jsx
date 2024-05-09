@@ -4,6 +4,7 @@ import axios from "axios";
 import { signin } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import AppLayout from "../config/AppLayout/AppLayout";
 
 const LoginSuccess = () => {
   const dispatch = useDispatch();
@@ -13,9 +14,7 @@ const LoginSuccess = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(
-          `${process.env.API_URL}/auth/login/success`
-        );
+        const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));
           navigate("/");
@@ -31,7 +30,7 @@ const LoginSuccess = () => {
   }, []);
 
   return (
-    <>
+    <AppLayout>
       {loading && (
         <Spin
           style={{
@@ -45,7 +44,7 @@ const LoginSuccess = () => {
           <h1 className="text-3xl text-primary">redirecting you to homepage</h1>
         </Spin>
       )}
-    </>
+    </AppLayout>
   );
 };
 

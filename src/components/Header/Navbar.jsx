@@ -255,17 +255,7 @@ export const Buttons = () => {
 };
 
 export const ToggleTheme = ({ changeTheme }) => {
-  const [theme, setTheme] = useState("");
-
-  useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    if (theme) {
-      setTheme(theme);
-    } else {
-      setTheme("light");
-      localStorage.setItem("theme", "light");
-    }
-  }, [changeTheme]);
+  const theme = localStorage.getItem("theme");
 
   return (
     <Button

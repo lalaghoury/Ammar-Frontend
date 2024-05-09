@@ -10,7 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 const MyOrders = () => {
   useOrderEffect();
   const navigate = useNavigate();
-  const { data: orders, loading, error } = useSelector((state) => state.orders);
+  const { data: orders, loading } = useSelector((state) => state.orders);
 
   return (
     <div>
@@ -29,7 +29,7 @@ const MyOrders = () => {
         {orders && orders.length > 0 ? (
           <>
             <Flex vertical>
-              {orders.slice(0, 2).map((order) => (
+              {orders?.map((order) => (
                 <>
                   <div
                     className="bg-sec p-5 rounded-lg  mt-2 flex flex-col gap-y-3"
@@ -37,10 +37,8 @@ const MyOrders = () => {
                   >
                     <p>Order no: #{order._id}</p>
                     <Flex justify="space-between" align="center">
-                      <div className="flex items-center">
-                        <Title className="m-0 px-1" level={4}>
-                          Order Date :{" "}
-                        </Title>
+                      <div>
+                        Order Date:
                         <Typography.Text className="m-0 px-1">
                           {new Date(order.createdAt).toLocaleDateString(
                             "en-US",
@@ -54,37 +52,47 @@ const MyOrders = () => {
                             }
                           )}
                         </Typography.Text>
+                        <p>Estimated Delivery Date : 8 June 2023</p>
                       </div>
-                      <div className="flex items-center">
-                        <Title className="m-0 px-1" level={4}>
-                          Order Status :{" "}
-                        </Title>
+                      <div>
+                        Order Status :{" "}
                         <Typography.Text className="m-0 px-1">
                           {order.status}
                         </Typography.Text>
+                        <p>Payment Method : {order?.payment?.cardType} </p>
                       </div>
                     </Flex>
                   </div>
                   <Flex vertical gap={20}>
                     {order?.products.length > 0 &&
                       order?.products.map((product) => (
-                        <Card key={product?._id} className="w-full">
+                        <Card key={product?.productId?._id} className="w-full">
                           <Flex gap={30} align="center">
-                            {/* <Image
-                              src={product?.images[0].url}
+                            <Image
+                              src={product?.productId?.thumbnail}
                               width={110}
                               height={110}
                               fallback="https://via.placeholder.com/110"
-                            /> */}
+                            />
                             <Flex
                               align="center"
                               justify="space-between"
                               style={{ flex: 1 }}
                             >
-                              <div>
-                                <Typography.Text className="bold">
-                                  Quantity : {product?.quantity}
-                                </Typography.Text>
+                              <div className="text-[#3c4242] font-['Causten'] font-semibold">
+                                <h1>{product?.productId?.name}</h1>
+                                <h1>
+                                  Colour :{" "}
+                                  <span className="text-[#bebcbd] text-center  text-sm  ">
+                                    {product?.color}
+                                  </span>
+                                </h1>
+                                <h1>
+                                  Qty :{" "}
+                                  <span className="text-[#bebcbd] text-center  text-sm  ">
+                                    {product?.quantity}
+                                  </span>
+                                </h1>
                               </div>
                               <Flex gap={20} align="center">
                                 {/* <Typography.Text className="op-7">
@@ -101,7 +109,9 @@ const MyOrders = () => {
                                 <Button
                                   type="primary"
                                   onClick={() =>
-                                    navigate(`/profile/orders/${product?._id}`)
+                                    navigate(
+                                      `/profile/order-details/${order?._id}`
+                                    )
                                   }
                                 >
                                   View Detail
