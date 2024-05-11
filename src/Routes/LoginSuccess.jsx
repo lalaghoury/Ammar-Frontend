@@ -4,7 +4,6 @@ import axios from "axios";
 import { signin } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "../config/AppLayout/AppLayout";
 
 const LoginSuccess = () => {
   const dispatch = useDispatch();
@@ -17,7 +16,7 @@ const LoginSuccess = () => {
         const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));
-          navigate("/");
+          window.location.href = "/";
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -30,21 +29,19 @@ const LoginSuccess = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <div className="h-[350px] w-screen flex items-center justify-center">
       {loading && (
-        <Spin
-          style={{
-            marginTop: "200px",
-            height: "calc(100vh - 200px)",
-            width: "100vw",
-          }}
-          className="flex items-center justify-center"
-        >
-          <h1 className="text-3xl text-purple-700">Login Success</h1>
-          <h1 className="text-3xl text-primary">redirecting you to homepage</h1>
-        </Spin>
+        <div className="flex flex-col items-center gap-5">
+          <h1 className="text-4xl text-black dark:text-gray-700 font-bold text-center">
+            Login Success
+          </h1>
+          <h1 className="text-4xl text-black dark:text-gray-700 font-bold text-center">
+            Redirecting you to Homepage
+          </h1>
+          <Spin className="flex items-center justify-center" />
+        </div>
       )}
-    </AppLayout>
+    </div>
   );
 };
 
