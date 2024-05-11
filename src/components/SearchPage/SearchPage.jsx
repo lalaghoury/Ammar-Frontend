@@ -10,14 +10,8 @@ import { cartThunks } from "../../redux/slices/cartSlice";
 import Title from "antd/es/typography/Title";
 
 const SearchPage = () => {
-  const {
-    data: products,
-    loading,
-    error,
-  } = useSelector((state) => state.products);
+  const { data: products, loading } = useSelector((state) => state.products);
   const auth = useSelector((state) => state.auth);
-
-  console.log(products);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

@@ -1,90 +1,39 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Flex, Avatar, message, Divider } from "antd";
-import ReactQuill from "react-quill";
-import { CloudUploadOutlined, LoadingOutlined } from "@ant-design/icons";
-import Dragger from "antd/es/upload/Dragger";
+import { Form, Input, Button, Flex, message, Divider, Avatar } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
+import { ProductDescriptionInput } from "../AllProducts/AddProduct";
+import Dragger from "antd/es/upload/Dragger";
+import { CloudUploadOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const AddCategory = () => {
   const [form] = Form.useForm();
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [images, setImages] = useState([]);
-  const [description, setDescription] = useState("");
-
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    const { data } = await axios.post(`${process.env.API_URL}/categories/new`, {
-      ...values,
-      image: images[0].url,
-    });
-    if (data.success) {
-      message.success(data.message);
-      navigate("/dashboard/categories/categories-list");
-    }
+    console.log("🚀 ~ onFinish ~ values:", values);
+    // setLoading(true);
+    // try {
+    //   const { data } = await axios.post(
+    //     `${process.env.API_URL}/categories/new`,
+    //     values
+    //   );
+    //   if (data.success) {
+    //     message.success(data.message);
+    //     navigate("/dashboard/categories/categories-list");
+    //   }
+    // } catch (error) {
+    //   console.log("Error in Adding Category", error.response.data.message);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleCancel = () => {
     form.resetFields();
     navigate(-1);
-  };
-
-  const beforeUpload = (file) => {
-    const isImage = file.type.startsWith("image/");
-    if (!isImage) {
-      message.error("You can only upload image files!");
-      return false;
-    }
-
-    setSelectedImages((prevImages) => [...prevImages, file]);
-
-    return false;
-  };
-
-  const handleUpload = async () => {
-    setLoading(true);
-
-    if (selectedImages.length === 0) {
-      message.error("No image selected");
-      setLoading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    for (const image of selectedImages) {
-      formData.append("images", image);
-    }
-
-    try {
-      const response = await axios.post(
-        `${process.env.API_URL}/images`,
-        formData
-      );
-      const data = response.data;
-      if (data.success) {
-        const newImages = data.images.map((imgObj) => ({
-          url: imgObj.url,
-          name: imgObj.name,
-        }));
-        setImages([...images, ...newImages]);
-        setSelectedImages([]);
-        setLoading(false);
-      } else {
-        message.error("Failed to upload images");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      message.error("Error uploading images");
-      setLoading(false);
-    }
-  };
-
-  const onDescriptionChange = (value) => {
-    setDescription(value);
   };
 
   return (
@@ -94,6 +43,8 @@ const AddCategory = () => {
       form={form}
       layout="vertical"
     >
+      <Title level={3}>Add Category</Title>
+      {/* Name */}
       <Form.Item
         label="Category Name"
         name="name"
@@ -105,6 +56,7 @@ const AddCategory = () => {
       </Form.Item>
       <Divider />
 
+      {/* Slug */}
       <Form.Item
         label="Category Slug"
         name="slug"
@@ -116,6 +68,7 @@ const AddCategory = () => {
       </Form.Item>
       <Divider />
 
+      {/* Description */}
       <Form.Item
         label="Category Description"
         name="description"
@@ -126,63 +79,19 @@ const AddCategory = () => {
           },
         ]}
       >
-        <CategoryDescriptionInput
-          value={description}
-          onChange={onDescriptionChange}
-        />
+        <ProductDescriptionInput />
       </Form.Item>
-
       <Divider />
 
-      {/* Images */}
+      {/* Image */}
       <Form.Item
         rules={[
           { required: true, message: "Please upload at least one image" },
         ]}
-        name={"images"}
+        name={"image"}
         label={<Title level={5}>Images</Title>}
       >
-        <Dragger
-          beforeUpload={beforeUpload}
-          onChange={handleUpload}
-          accept="image/*"
-          style={{ border: "2px dashed rgba(0,0,0,0.1)", opacity: 1 }}
-        >
-          <>
-            {loading ? (
-              <Flex
-                gap={4}
-                align="center"
-                justify="center"
-                style={{ height: 200 }}
-              >
-                <span>Uploading image(s)...</span>
-                <LoadingOutlined style={{ fontSize: 64 }} />
-              </Flex>
-            ) : (
-              <Flex
-                gap={4}
-                align="center"
-                justify="center"
-                style={{ height: 200 }}
-              >
-                <p className="ant-upload-drag-icon">
-                  <Avatar size={64}>
-                    <CloudUploadOutlined style={{ fontSize: 32 }} />
-                  </Avatar>
-                </p>
-                <Flex vertical gap={4}>
-                  <p className="ant-upload-text">
-                    Click or upload or drag and drop
-                  </p>
-                  <p className="ant-upload-hint">
-                    (SVG, JPG, PNG, or gif maximum 900x400)
-                  </p>
-                </Flex>
-              </Flex>
-            )}
-          </>
-        </Dragger>
+        <SingleImageInput />
       </Form.Item>
 
       {/* Buttons */}
@@ -191,8 +100,8 @@ const AddCategory = () => {
           <Button onClick={handleCancel}>Cancel</Button>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Add Product
+          <Button loading={loading} type="primary" htmlType="submit">
+            Add Category
           </Button>
         </Form.Item>
       </Flex>
@@ -200,19 +109,68 @@ const AddCategory = () => {
   );
 };
 
-const CategoryDescriptionInput = ({ value, onChange }) => {
-  const handleChange = (value) => {
-    onChange(value);
+export default AddCategory;
+
+export const SingleImageInput = ({ value = "", onChange }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleUpload = (info) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+    }
+    if (info.file.status === "done") {
+      setLoading(false);
+      const imageUrl = info.file.response.imageUrl;
+      onChange?.(imageUrl);
+    }
   };
 
   return (
-    <ReactQuill
-      value={value}
-      onChange={handleChange}
-      placeholder="Enter product description"
-      className="custom-quill"
-    />
+    <Flex vertical gap={30}>
+      <Dragger
+        accept="image/*"
+        style={{ border: "2px dashed rgba(0,0,0,0.1)", opacity: 1 }}
+        action={`${process.env.API_URL}/images/single`}
+        onChange={handleUpload}
+        maxCount={1}
+      >
+        <>
+          {loading ? (
+            <Flex
+              gap={4}
+              align="center"
+              justify="center"
+              style={{ height: 200 }}
+            >
+              <span>Uploading image...</span>
+              <LoadingOutlined style={{ fontSize: 64 }} />
+            </Flex>
+          ) : (
+            <Flex
+              gap={4}
+              align="center"
+              justify="center"
+              style={{ height: 200 }}
+            >
+              <p className="ant-upload-drag-icon">
+                <Avatar size={64}>
+                  <CloudUploadOutlined style={{ fontSize: 32 }} />
+                </Avatar>
+              </p>
+              <Flex vertical gap={4}>
+                <p className="ant-upload-text">
+                  Click or upload or drag and drop
+                </p>
+                <p className="ant-upload-hint">
+                  (SVG, JPG, PNG, or gif maximum 900x400)
+                </p>
+              </Flex>
+            </Flex>
+          )}
+        </>
+      </Dragger>
+
+      <Divider />
+    </Flex>
   );
 };
-
-export default AddCategory;

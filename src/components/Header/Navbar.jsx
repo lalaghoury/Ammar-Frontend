@@ -12,10 +12,10 @@ import {
 import { Badge, Button, Input, Select, Space } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthEffect } from "../../redux/slices/authSlice";
-import { cartThunks, useCartEffect } from "../../redux/slices/cartSlice";
 import { useWishlistEffect } from "../../redux/slices/wishlistSlice";
 import { useDispatch } from "react-redux";
 import { signout as signoutAction } from "../../redux/slices/authSlice";
+import { useCartEffect } from "../../redux/slices/cartSlice";
 
 export const Logo = () => {
   const navigate = useNavigate();
@@ -32,16 +32,16 @@ export const Links = () => {
       <Link className="hov-scale" to={"/shop"}>
         Shop
       </Link>
-      <Link className="hov-scale" to={"/men"}>
+      <Link className="hov-scale" to={"/category/men"}>
         Men
       </Link>
-      <Link className="hov-scale" to={"/women"}>
+      <Link className="hov-scale" to={"/category/women"}>
         Womens
       </Link>
-      <Link className="hov-scale" to={"/combos"}>
+      <Link className="hov-scale" to={"/category/combos"}>
         Combos
       </Link>
-      <Link className="hov-scale" to={"/joggers"}>
+      <Link className="hov-scale" to={"/category/joggers"}>
         Joggers
       </Link>
     </div>
@@ -151,20 +151,13 @@ export const SelectLanguage = () => {
 };
 
 export const Buttons = () => {
-  useCartEffect("count");
   useAuthEffect();
+  useCartEffect("count");
   useWishlistEffect("count");
-  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const { count: Cartcount } = useSelector((state) => state.cart);
   const { count: Wishlistcount } = useSelector((state) => state.wishlist);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (auth.user) {
-      dispatch(cartThunks.getCount());
-    }
-  }, [dispatch]);
 
   return (
     <>

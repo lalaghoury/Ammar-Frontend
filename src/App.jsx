@@ -36,9 +36,10 @@ import {
   IsAdmin,
   AlreadyLoggedInRoute,
   MainLayout,
+  ErrorPage,
+  OrderDetails,
+  CategoryDetails,
 } from "./comp";
-import ErrorPage from "./components/ErrorPage/ErrorPage";
-import OrderDetails from "./admin/AllOrders/OrderDetails";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -93,11 +94,15 @@ function App() {
         },
         {
           path: "/product/:productId",
-          element: <ProductDetails authRequired={false} />,
+          element: <ProductDetails />,
         },
         {
           path: "/search",
           element: <SearchPage />,
+        },
+        {
+          path: "/category/:categoryName",
+          element: <CategoryDetails />,
         },
         {
           path: "/",

@@ -24,6 +24,7 @@ const columns = [
           <Image
             src={name.image}
             alt={name.name}
+            preview={false}
             width={90}
             height={90}
             style={{ objectFit: "center", borderRadius: "9px" }}

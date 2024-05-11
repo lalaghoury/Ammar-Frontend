@@ -164,9 +164,8 @@ const EditProduct = () => {
         );
         const data = await response.data;
         if (data.success) {
-          message.success(data.message, 1.5, () => {
-            navigate("/dashboard/products/products-list");
-          });
+          message.success(data.message);
+          navigate("/dashboard/products/products-list");
         }
         setLoading(false);
       } catch (error) {

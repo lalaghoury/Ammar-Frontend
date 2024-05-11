@@ -14,6 +14,7 @@ import AddProduct from "./admin/AllProducts/AddProduct";
 import EditProduct from "./admin/EditProduct/EditProduct";
 import AllDressStylesList from "./admin/AllDressStyles/AllDressStylesList";
 import AddDressStyle from "./admin/AllDressStyles/AddDressStyle";
+import OrderDetails from "./admin/AllOrders/OrderDetails";
 
 // Pages
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
@@ -27,6 +28,7 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import MyOrders from "./pages/UserProfilePage/MyOrders";
 import MyWishlist from "./pages/UserProfilePage/MyWishlist";
 import MyInfo from "./pages/UserProfilePage/MyInfo";
+import CategoryDetails from "./pages/CategoryDetails/CategoryDetails";
 
 // Routes
 import PrivateRoute from "./Routes/Private";
@@ -41,12 +43,16 @@ import ProductDetails from "./components/ProductDetails/ProductDetails";
 import OrderConfirmed from "./components/OrderConfirmed/OrderConfirmed";
 import SearchPage from "./components/SearchPage/SearchPage";
 
+// Error Page
+import ErrorPage from "./components/ErrorPage/ErrorPage";
+
 export {
   Header,
   SignUpPage,
   SignInPage,
   HomePage,
   ForgotPasswordPage,
+  CategoryDetails,
   NewPasswordPage,
   PageNotFound,
   AdminDashboard,
@@ -75,4 +81,6 @@ export {
   IsAdmin,
   AlreadyLoggedInRoute,
   MainLayout,
+  ErrorPage,
+  OrderDetails, 
 };

@@ -30,9 +30,7 @@ const Shop = () => {
   const [colors, setColors] = useState([]);
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [DressStyleNames, setDressStyleNames] = useState([]);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseLeaveDelay, setMouseLeaveDelay] = useState(null);
-  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
+  const [numberOfLoadedProducts, setNumberOfLoadedProducts] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +55,8 @@ const Shop = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
+        setLoading(true);
+        const { data } = await axios.get(
           `${process.env.API_URL}/products/filter`,
           {
             params: {
@@ -67,70 +66,30 @@ const Shop = () => {
               dressStyle,
               colors,
               sizes,
+              limit: 3,
             },
           }
         );
-        if (response.data.success) {
-          setProducts(response.data.products);
+
+        if (data.success) {
+          setProducts((prevProducts) => [...prevProducts, ...data.products]);
+          setNumberOfLoadedProducts(
+            (prevCount) => prevCount + data.products.length
+          );
         }
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching products:", error.response.data.message);
+        message.error(error.response.data.message);
+      } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [minPrice, maxPrice, category, dressStyle, colors, sizes]);
-
-  const handleCategoryClick = (value) => {
-    setCategory(value);
-  };
-
-  const handleDressStyleClick = (value) => {
-    setDressStyle(value);
-  };
 
   const handlePriceRangeChange = (value) => {
     setMinPrice(value[0]);
     setMaxPrice(value[1]);
-  };
-
-  const handleColorClick = (addedColor) => {
-    const newColors = colors.includes(addedColor)
-      ? colors.filter((color) => color !== addedColor)
-      : [...colors, addedColor];
-
-    setColors(newColors);
-
-    const divElement = document.getElementById(`${addedColor}`);
-    const divChildElement = document.querySelector(
-      `#${addedColor} #${addedColor}`
-    );
-    if (colors.includes(addedColor)) {
-      divElement.style.color = "";
-      divChildElement.style.border = "";
-    } else {
-      divElement.style.color = "#8a33fd";
-      divChildElement.style.border = "#ddd dashed 3px";
-    }
-  };
-
-  const handleSizeClick = (addedSize) => {
-    const newSizes = sizes.includes(addedSize)
-      ? sizes.filter((size) => size !== addedSize)
-      : [...sizes, addedSize];
-
-    setSizes(newSizes);
-
-    const divElement = document.getElementById(`${addedSize}`);
-    if (sizes.includes(addedSize)) {
-      divElement.style.backgroundColor = "#fff";
-      divElement.style.color = "#807d7e";
-    } else {
-      divElement.style.backgroundColor = "#807d7e";
-      divElement.style.color = "#fff";
-    }
   };
 
   const handleReset = () => {
@@ -155,7 +114,7 @@ const Shop = () => {
           {categoriesNames?.map((categoryObj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
-              onClick={() => handleCategoryClick(categoryObj._id)}
+              onClick={() => setCategory(categoryObj._id)}
             >
               {categoryObj?.name}
             </p>
@@ -216,7 +175,7 @@ const Shop = () => {
           Colors
         </h1>
       ),
-      children: <Colors handleColorClick={handleColorClick} />,
+      children: <Colors colors={colors} setColors={setColors} />,
     },
 
     {
@@ -224,7 +183,7 @@ const Shop = () => {
       label: (
         <h1 className="text-[#8a8989] font-semibold leading-[normal]">Size</h1>
       ),
-      children: <Sizes handleSizeClick={handleSizeClick} />,
+      children: <Sizes sizes={sizes} setSizes={setSizes} />,
     },
 
     {
@@ -239,7 +198,7 @@ const Shop = () => {
           {DressStyleNames?.map((Obj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
-              onClick={() => handleDressStyleClick(Obj?._id)}
+              onClick={() => setDressStyle(Obj?._id)}
             >
               {Obj?.name}
             </p>
@@ -250,32 +209,43 @@ const Shop = () => {
     },
   ];
 
-  const handleMouseMove = (index, e) => {
-    const offsetX = e.pageX;
-    const offsetY = e.pageY;
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const deltaX = offsetX - centerX;
-    const deltaY = offsetY - centerY;
+  async function loadMoreProducts() {
+    try {
+      const response = await axios.get(
+        `${process.env.API_URL}/products/lazy-load`,
+        {
+          params: {
+            offset: numberOfLoadedProducts,
+            limit: 3,
+          },
+        }
+      );
+      if (response.data.success) {
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          ...response.data.products,
+        ]);
+        setNumberOfLoadedProducts(
+          (prevCount) => prevCount + response.data.products.length
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching more products:", error);
+    }
+  }
 
-    setMousePosition({ x: deltaX, y: deltaY });
-    setHoveredCardIndex(index);
-  };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
-  const handleMouseEnter = () => {
-    clearTimeout(mouseLeaveDelay);
-  };
-
-  const handleMouseLeave = () => {
-    setMouseLeaveDelay(
-      setTimeout(() => {
-        setMousePosition({ x: 0, y: 0 });
-        setHoveredCardIndex(null);
-      }, 1000)
-    );
-  };
-
-  const { x: mousex, y: mousey } = mousePosition;
+  function handleScroll() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      loadMoreProducts();
+    }
+  }
 
   return (
     <div>
@@ -329,24 +299,14 @@ const Shop = () => {
             </div>
             <div className="w-[1095px]">
               <CommonHeading text={"Shop"} className={"!mt-0"} />
-              <div className="card-wrap flex flex-wrap justify-between  gap-[24px]">
+              <div
+                id="product-list"
+                className="card-wrap flex flex-wrap justify-between gap-[24px]"
+              >
                 {products.map((product, index) => (
                   <div
-                    key={product?._id}
+                    key={index}
                     className={`card card${index} rounded-lg w-[282px] h-[460px] bg-white mb-[50px] relative cursor-pointer overflow-hidden`}
-                    onMouseMove={(e) => handleMouseMove(index, e)}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    style={{
-                      transform:
-                        hoveredCardIndex === index
-                          ? `rotateY(${
-                              (mousex / window.innerWidth) * 30
-                            }deg) rotateX(${
-                              (-mousey / window.innerHeight) * 30
-                            }deg)`
-                          : "none",
-                    }}
                   >
                     <Image
                       className="hover:scale-110 ease-in-out duration-500 rounded-lg object-cover"
@@ -376,18 +336,11 @@ const Shop = () => {
                         </div>
                       </div>
                       <p className="dis-fcc text-[#3c4242] font-['Causten'] text-sm font-bold leading-[normal] rounded-lg bg-[#F6F6F6] w-[82px] h-[37px]">
-                        {product.currency === "USD" ? (
-                          <p>${product.price}</p>
-                        ) : product.currency === "PKR" ? (
-                          <p>Rs. {product.price}</p>
-                        ) : product.currency === "EUR" ? (
-                          <p>&euro; {product.price}</p>
-                        ) : product.currency === "RON" ? (
-                          <p>lei {product.price}</p>
-                        ) : (
-                          <p>UNKNOWN CURRENCY</p>
-                        )}
-                        .00
+                        {Intl.NumberFormat(undefined, {
+                          style: "decimal",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).format(product?.price)}
                       </p>
                     </div>
                   </div>
@@ -397,15 +350,13 @@ const Shop = () => {
           </Flex>
         </Spin>
       </AppLayout>
-      <FooterUser />
+      {/* <FooterUser /> */}
     </div>
   );
 };
 
-export default Shop;
-
-const Colors = ({ handleColorClick }) => {
-  const colors = [
+const Colors = ({ colors, setColors }) => {
+  const colorsArr = [
     { colorName: "Purple", backgroundColor: "#8434E1" },
     { colorName: "Black", backgroundColor: "#252525" },
     { colorName: "Red", backgroundColor: "#F35528" },
@@ -420,10 +371,31 @@ const Colors = ({ handleColorClick }) => {
     { colorName: "Blue", backgroundColor: "#3FDEFF" },
   ];
 
+  const handleColorClick = (addedColor) => {
+    const newColors = colors.includes(addedColor)
+      ? colors.filter((color) => color !== addedColor)
+      : [...colors, addedColor];
+    setColors(newColors);
+
+    const divElement = document.getElementById(`${addedColor}`);
+
+    const divChildElement = document.querySelector(
+      `#${addedColor} #${addedColor}`
+    );
+
+    if (colors.includes(addedColor)) {
+      divElement.style.color = "";
+      divChildElement.style.border = "";
+    } else {
+      divElement.style.color = "#8a33fd";
+      divChildElement.style.border = "#ddd dashed 3px";
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-4">
-        {colors.map((color, index) => (
+        {colorsArr.map((color, index) => (
           <div
             className="color-swatch flex flex-col items-center justify-center gap-2 item"
             onClick={() => handleColorClick(color.colorName)}
@@ -445,7 +417,7 @@ const Colors = ({ handleColorClick }) => {
   );
 };
 
-const Sizes = ({ handleSizeClick }) => {
+const Sizes = ({ sizes, setSizes }) => {
   const generateSizeItems = () => {
     return ["XXS", "XL", "XS", "S", "M", "L", "XXL", "3XL", "4XL"].map(
       (size) => (
@@ -460,6 +432,23 @@ const Sizes = ({ handleSizeClick }) => {
       )
     );
   };
+
+  const handleSizeClick = (addedSize) => {
+    const newSizes = sizes.includes(addedSize)
+      ? sizes.filter((size) => size !== addedSize)
+      : [...sizes, addedSize];
+
+    setSizes(newSizes);
+
+    const divElement = document.getElementById(`${addedSize}`);
+    if (sizes.includes(addedSize)) {
+      divElement.style.backgroundColor = "#fff";
+      divElement.style.color = "#807d7e";
+    } else {
+      divElement.style.backgroundColor = "#807d7e";
+      divElement.style.color = "#fff";
+    }
+  };
   return (
     <div>
       <div className={`flex gap-[20px] flex-wrap`}>{generateSizeItems()}</div>
@@ -467,3 +456,5 @@ const Sizes = ({ handleSizeClick }) => {
     </div>
   );
 };
+
+export default Shop;

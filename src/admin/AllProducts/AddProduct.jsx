@@ -90,19 +90,21 @@ const AddProduct = () => {
         const randomSku = Math.random().toString(36).substr(2, 5);
         values.sku = randomSku;
       }
-
-      const { data } = await axios.post(
-        `${process.env.API_URL}/products/new`,
-        values
-      );
-
+      if (!selectedThumbnail) {
+        message.info("Please select a thumbnail");
+        return;
+      }
+      const { data } = await axios.post(`${process.env.API_URL}/products/new`, {
+        ...values,
+        thumbnail: selectedThumbnail,
+      });
       if (data.success) {
         message.success("Product created successfully", 1.5, () => {
           navigate("/dashboard/products/products-list");
         });
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error in Adding Product", error.response.data.message);
       message.error("Something went wrong", 1.5);
     } finally {
       setLoading(false);
@@ -561,7 +563,7 @@ export const ImageInput = ({
   };
 
   const handleDelete = (record) => {
-    triggerDelete(images.findIndex((imgObj) => imgObj.url === record.url));
+    triggerDelete(value.findIndex((imgObj) => imgObj.url === record.url));
   };
 
   const handleSetThumbnail = (record) => {

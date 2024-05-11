@@ -1,45 +1,39 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Flex, Avatar, message, Divider } from "antd";
-import ReactQuill from "react-quill";
-import { CloudUploadOutlined, LoadingOutlined } from "@ant-design/icons";
-import Dragger from "antd/es/upload/Dragger";
+import { Form, Input, Button, Flex, message, Divider } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
-import { ImageInput } from "../AllProducts/AddProduct";
+import { ProductDescriptionInput } from "../AllProducts/AddProduct";
+import { SingleImageInput } from "../AllCategories/AddCategory";
 
 const AddDressStyle = () => {
   const [form] = Form.useForm();
-  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    setLoading(true);
-    try {
-      const { data } = await axios.post(
-        `${process.env.API_URL}/dress-styles/new`,
-        { ...values, image: values.images[0].url }
-      );
-      if (data.success) {
-        message.success(data.message);
-        navigate("/dashboard/dress-styles/dress-styles-list");
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log("Error in Adding Dress Style", error.response.data.message);
-      message.error(error.response.data.message);
-    }
+    console.log("🚀 ~ onFinish ~ values:", values);
+    // setLoading(true);
+    // try {
+    //   const { data } = await axios.post(
+    //     `${process.env.API_URL}/dress-styles/new`,
+    //     { ...values, image: values.images[0].url }
+    //   );
+    //   if (data.success) {
+    //     message.success(data.message);
+    //     navigate("/dashboard/dress-styles/dress-styles-list");
+    //   }
+    // } catch (error) {
+    //   console.log("Error in Adding Dress Style", error.response.data.message);
+    //   message.error(error.response.data.message);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleCancel = () => {
     form.resetFields();
     navigate(-1);
-  };
-
-  const onDescriptionChange = (value) => {
-    setDescription(value);
   };
 
   return (
@@ -49,6 +43,8 @@ const AddDressStyle = () => {
       form={form}
       layout="vertical"
     >
+      <Title level={3}>Add Dress Style</Title>
+      {/* Name */}
       <Form.Item
         label="Dress Style Name"
         name="name"
@@ -60,6 +56,7 @@ const AddDressStyle = () => {
       </Form.Item>
       <Divider />
 
+      {/* Slug */}
       <Form.Item
         label="Dress Style Slug"
         name="slug"
@@ -71,6 +68,7 @@ const AddDressStyle = () => {
       </Form.Item>
       <Divider />
 
+      {/* Description */}
       <Form.Item
         label="Dress Style Description"
         name="description"
@@ -81,20 +79,20 @@ const AddDressStyle = () => {
           },
         ]}
       >
-        <DescriptionInput value={description} onChange={onDescriptionChange} />
+        <ProductDescriptionInput />
       </Form.Item>
 
       <Divider />
 
-      {/* Images */}
+      {/* Image */}
       <Form.Item
         rules={[
           { required: true, message: "Please upload at least one image" },
         ]}
-        name={"images"}
+        name={"image"}
         label={<Title level={5}>Images</Title>}
       >
-        <ImageInput />
+        <SingleImageInput />
       </Form.Item>
 
       {/* Buttons */}
@@ -103,27 +101,12 @@ const AddDressStyle = () => {
           <Button onClick={handleCancel}>Cancel</Button>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button loading={loading} type="primary" htmlType="submit">
             Add Dress Style
           </Button>
         </Form.Item>
       </Flex>
     </Form>
-  );
-};
-
-const DescriptionInput = ({ value = "", onChange }) => {
-  const handleChange = (value) => {
-    onChange(value);
-  };
-
-  return (
-    <ReactQuill
-      value={value}
-      onChange={handleChange}
-      placeholder="Enter product description"
-      className="custom-quill"
-    />
   );
 };
 
