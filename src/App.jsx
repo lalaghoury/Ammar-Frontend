@@ -81,12 +81,8 @@ function App() {
       errorElement: <ErrorPage />,
       children: [
         {
-          path: "/",
+          index: true,
           element: <HomePage />,
-        },
-        {
-          path: "/auth/login/success",
-          element: <LoginSuccess />,
         },
         {
           path: "/shop",
@@ -115,7 +111,6 @@ function App() {
             {
               path: "/cart",
               element: <CartPage />,
-              // errorElement: <ErrorPage  />,
             },
             {
               path: "/profile",
@@ -232,6 +227,10 @@ function App() {
             {
               path: "/sign-in",
               element: <SignInPage changeTheme={changeTheme} />,
+            },
+            {
+              path: "/auth/login/success",
+              element: <LoginSuccess />,
             },
           ],
         },

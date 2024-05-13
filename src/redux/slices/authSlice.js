@@ -57,20 +57,25 @@ export const useAuthActions = () => {
 };
 
 export const authThunks = {
-  signout: createAsyncThunk("auth/signout", async (_, { dispatch, rejectWithValue }) => {
-    try {
-      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
-      if (data.success) {
-        message.success(data.message, 1, () => {
-          dispatch(signoutAction());
-        });
-        return true;
+  signout: createAsyncThunk(
+    "auth/signout",
+    async (_, { dispatch, rejectWithValue }) => {
+      try {
+        const { data } = await axios.post(
+          `${process.env.API_URL}/auth/signout`
+        );
+        if (data.success) {
+          message.success(data.message, 1, () => {
+            dispatch(signoutAction());
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error("Error logging out:", error.response.data.message);
+        return rejectWithValue(error.response.data.message);
       }
-    } catch (error) {
-      console.error("Error logging out:", error.response.data.message);
-      return rejectWithValue(error.response.data.message);
     }
-  }),
+  ),
 };
 
 export const useAuthEffect = () => {

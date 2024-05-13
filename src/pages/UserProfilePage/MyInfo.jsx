@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Divider, Flex, Form, Input, Modal, Select, Spin } from "antd";
+import { Button, Divider, Flex, Form, Input, Modal, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import Paragraph from "antd/es/typography/Paragraph";
 import {
@@ -9,7 +9,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { userThunks } from "../../redux/slices/userSlice";
 import Title from "antd/es/typography/Title";
-import { LoadingOutlined } from "@ant-design/icons";
 import { AddAddressForm } from "../CheckoutPage/CheckoutPage";
 
 const MyInfo = () => {

@@ -3,15 +3,16 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { signin } from "../redux/slices/authSlice";
+import { signin, useAuthEffect } from "../redux/slices/authSlice";
 import { useSelector } from "react-redux";
 import { signout } from "../redux/slices/authSlice";
 
 export default function PrivateRoute() {
+  useAuthEffect();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { user: authUser, verified } = useSelector((state) => state.auth);
+  const { verified } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const verifyLogin = async () => {
@@ -26,6 +27,8 @@ export default function PrivateRoute() {
         console.error("Verification failed:", error.response.data.message);
         dispatch(signout());
         navigate("sign-in", { replace: true });
+      } finally {
+        setLoading(false);
       }
     };
     verifyLogin();
