@@ -101,7 +101,7 @@ const OrderDetails = () => {
       {/* Notification component */}
       <div className="w-[748px] h-[4.1875rem] mx-auto flex items-center justify-between px-[29px] py-[24px] rounded-lg border-[0.5px] border-[#807d7e]/[.20] bg-[#f6f6f6]">
         <div className="text-[#807d7e] font-['Causten'] font-semibold leading-[normal]">
-          8 June 2023 3:40 PM{" "}
+          {formatDate(order.createdAt)}
         </div>
         <div className="text-[#3c4242] font-['Causten'] font-semibold leading-[normal]">
           Your order has been successfully verified.
@@ -118,7 +118,7 @@ const OrderDetails = () => {
   );
 };
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",

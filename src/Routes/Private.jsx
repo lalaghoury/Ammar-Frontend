@@ -28,9 +28,7 @@ export default function PrivateRoute() {
         navigate("sign-in", { replace: true });
       }
     };
-    if (authUser) {
-      verifyLogin();
-    }
+    verifyLogin();
   }, [navigate]);
 
   if (loading) {
