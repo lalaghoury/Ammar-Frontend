@@ -8,7 +8,7 @@ const CategoryDetails = () => {
   return (
     <div>
       <CardShortHand
-        apiUrl={`${process.env.API_URL}/categories/${categoryName}`}
+        apiUrl={`${process.env.API_URL}/categories/details/${categoryName}`}
         text={categoryName}
       />
     </div>

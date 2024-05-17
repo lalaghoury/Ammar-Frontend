@@ -105,6 +105,74 @@ function App() {
           element: <PrivateRoute />,
           children: [
             {
+              path: "/",
+              element: <IsAdmin />,
+              children: [
+                {
+                  path: "/dashboard",
+                  element: <AdminLayout />,
+                  children: [
+                    {
+                      index: true,
+                      element: <AdminDashboard />,
+                    },
+                    {
+                      path: "orders/orders-list",
+                      element: <AllOrdersList />,
+                    },
+                    {
+                      path: "orders/order-details/:id",
+                      element: <AllOrdersList />,
+                    },
+                    {
+                      path: "orders/edit-order/:id",
+                      element: <AllOrdersList />,
+                    },
+                    {
+                      path: "users/all-users-list",
+                      element: <AllUsersList />,
+                    },
+                    {
+                      path: "users/add-user",
+                      element: <AllUsersList />,
+                    },
+                    {
+                      path: "users/details/:id",
+                      element: <AllUsersList />,
+                    },
+                    {
+                      path: "products/products-list",
+                      element: <AllProductsList />,
+                    },
+                    {
+                      path: "products/add-product",
+                      element: <AddProduct />,
+                    },
+                    {
+                      path: "products/edit-product/:id",
+                      element: <EditProduct />,
+                    },
+                    {
+                      path: "categories/categories-list",
+                      element: <AllCategoriesList />,
+                    },
+                    {
+                      path: "categories/add-category",
+                      element: <AddCategory />,
+                    },
+                    {
+                      path: "dress-styles/dress-styles-list",
+                      element: <AllDressStylesList />,
+                    },
+                    {
+                      path: "dress-styles/add-dress-style",
+                      element: <AddDressStyle />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               path: "/forgot-password",
               element: <ForgotPasswordPage />,
             },
@@ -145,74 +213,6 @@ function App() {
             {
               path: "/order-confirmed",
               element: <OrderConfirmed />,
-            },
-          ],
-        },
-        {
-          path: "/",
-          element: <IsAdmin />,
-          children: [
-            {
-              path: "/dashboard",
-              element: <AdminLayout />,
-              children: [
-                {
-                  index: true,
-                  element: <AdminDashboard />,
-                },
-                {
-                  path: "orders/orders-list",
-                  element: <AllOrdersList />,
-                },
-                {
-                  path: "orders/order-details/:id",
-                  element: <AllOrdersList />,
-                },
-                {
-                  path: "orders/edit-order/:id",
-                  element: <AllOrdersList />,
-                },
-                {
-                  path: "users/all-users-list",
-                  element: <AllUsersList />,
-                },
-                {
-                  path: "users/add-user",
-                  element: <AllUsersList />,
-                },
-                {
-                  path: "users/details/:id",
-                  element: <AllUsersList />,
-                },
-                {
-                  path: "products/products-list",
-                  element: <AllProductsList />,
-                },
-                {
-                  path: "products/add-product",
-                  element: <AddProduct />,
-                },
-                {
-                  path: "products/edit-product/:id",
-                  element: <EditProduct />,
-                },
-                {
-                  path: "categories/categories-list",
-                  element: <AllCategoriesList />,
-                },
-                {
-                  path: "categories/add-category",
-                  element: <AddCategory />,
-                },
-                {
-                  path: "dress-styles/dress-styles-list",
-                  element: <AllDressStylesList />,
-                },
-                {
-                  path: "dress-styles/add-dress-style",
-                  element: <AddDressStyle />,
-                },
-              ],
             },
           ],
         },

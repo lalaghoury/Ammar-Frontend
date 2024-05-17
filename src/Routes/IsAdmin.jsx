@@ -10,7 +10,7 @@ export default function IsAdmin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { user: authUser, verified } = useSelector((state) => state.auth);
+  const { verified } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const verifyLogin = async () => {
@@ -24,15 +24,13 @@ export default function IsAdmin() {
         }
       } catch (error) {
         console.error("Verification failed:", error.response.data.message);
-        navigate("sign-in", { replace: true });
+        navigate("page-not-found", { replace: true });
       } finally {
         setLoading(false);
       }
     };
 
-    if (authUser) {
-      verifyLogin();
-    }
+    verifyLogin();
   }, [navigate]);
 
   if (loading) {

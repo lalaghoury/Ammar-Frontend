@@ -19,7 +19,6 @@ export default function PrivateRoute() {
       try {
         const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
         if (data.success) {
-          setLoading(false);
           dispatch(signin({ user: data.user }));
           return;
         }
@@ -37,10 +36,9 @@ export default function PrivateRoute() {
   if (loading) {
     return (
       <Spin
+        className="mt-[200px] w-screen"
         style={{
-          marginTop: "200px",
           height: "calc(100vh - 200px)",
-          width: "100vw",
         }}
       />
     );

@@ -1,12 +1,12 @@
 import React from "react";
 import "./Deals.scss";
 import AppLayout from "../../config/AppLayout/AppLayout";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 
 const Deals = () => {
   return (
     <AppLayout>
-      <div className="deals dis-fcc">
+      <div className="deals dis-fcsb">
         <div
           style={{
             background:
@@ -17,12 +17,16 @@ const Deals = () => {
         >
           <Typography>
             <Typography.Title level={4}>Low Price</Typography.Title>
-            <Typography.Title level={1}>
-              High Coziness <br />
-              <br />
-            </Typography.Title>
+            <div className="deal-heading">
+              <Typography.Title className="inline-block" level={1}>
+                High
+              </Typography.Title>
+              <Typography.Title className="inline-block" level={1}>
+                Coziness
+              </Typography.Title>
+            </div>
             <Typography.Title level={5}>UPTO 50% OFF</Typography.Title>
-            <Typography.Title level={5}>Explore Items</Typography.Title>
+            <Button className="dis-fcc">Explore Items</Button>{" "}
           </Typography>
         </div>
         <div
@@ -35,11 +39,16 @@ const Deals = () => {
         >
           <Typography>
             <Typography.Title level={4}>Beyoung Presents</Typography.Title>
-            <Typography.Title level={1}>
-              Breezy Summer <br /> Style
-            </Typography.Title>
+            <div className="deal-heading">
+              <Typography.Title className="inline-block" level={1}>
+                Breezy{" "}
+              </Typography.Title>
+              <Typography.Title className="inline-block" level={1}>
+                Summer
+              </Typography.Title>
+            </div>
             <Typography.Title level={5}>UPTO 50% OFF</Typography.Title>
-            <Typography.Title level={5}>Explore Items</Typography.Title>
+            <Button className="dis-fcc">Explore Items</Button>
           </Typography>
         </div>
       </div>
