@@ -40,8 +40,11 @@ import {
   OrderDetails,
   CategoryDetails,
 } from "./comp";
+import { useSelector } from "react-redux";
 
 function App() {
+  const { token } = useSelector((state) => state.auth);
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   const [theme, setTheme] = useState("light");
 
   const changeTheme = useCallback(() => {
