@@ -39,9 +39,11 @@ import {
   OrderDetails,
   CategoryDetails,
 } from "./comp";
+import axios from "axios";
 
 function App() {
   const [theme, setTheme] = useState("light");
+  axios.defaults.withCredentials = true;
 
   const changeTheme = useCallback(() => {
     const newTheme = theme === "light" ? "dark" : "light";

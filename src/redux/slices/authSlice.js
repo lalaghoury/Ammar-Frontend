@@ -24,7 +24,7 @@ export const useAuthActions = () => {
       );
       if (data.success) {
         const { user } = data;
-        dispatch(signinAction({ user, token }));
+        dispatch(signinAction({ user }));
         message.success(data.message);
         return true;
       }
