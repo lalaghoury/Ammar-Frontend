@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import "./SignInPage.scss";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import GoogleSvg from "../../assets/images/Google.svg";
-// import TwitterSvg from "../../assets/images/twitter.svg";
 import SignInImage from "../../assets/images/signup.png";
 import { Button, Divider, Form, Input, Space, message } from "antd";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -33,10 +32,6 @@ const SignInPage = () => {
   function googleSignIn() {
     window.location.href = `${process.env.API_URL}/auth/google`;
   }
-
-  // function twitterSignIn() {
-  //   window.location.href = `${process.env.API_URL}/auth/twitter";
-  // }
 
   const onFinish = async (values) => {
     setIsSubmitting(true);
@@ -75,17 +70,6 @@ const SignInPage = () => {
                     Continue With Discord
                   </span>
                 </Button>{" "}
-                {/* <Button className="signup-btn" block onClick={twitterSignIn}>
-                  <img
-                    src={TwitterSvg}
-                    alt="twitter img"
-                    style={{ width: "2rem", height: "2rem" }}
-                    className="mr-3"
-                  />
-                  <span style={{ verticalAlign: "middle" }}>
-                    Continue With Twitter
-                  </span>
-                </Button>{" "} */}
               </div>
             </div>
             <Divider orientation="center">

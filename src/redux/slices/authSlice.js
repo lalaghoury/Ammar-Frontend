@@ -10,6 +10,7 @@ const initialState = {
   isLoggedIn: false,
   loading: false,
   error: null,
+  token: "",
   verified: false,
 };
 
@@ -23,8 +24,8 @@ export const useAuthActions = () => {
         values
       );
       if (data.success) {
-        const { user } = data;
-        dispatch(signinAction({ user }));
+        const { user, token } = data;
+        dispatch(signinAction({ user, token }));
         message.success(data.message);
         return true;
       }
@@ -84,8 +85,8 @@ export const useAuthEffect = () => {
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     if (auth) {
-      const { user } = JSON.parse(auth);
-      dispatch(signinAction({ user }));
+      const { user, token } = JSON.parse(auth);
+      dispatch(signinAction({ user, token }));
     }
   }, [dispatch]);
 };
@@ -95,7 +96,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     signin: (state, action) => {
-      const { user } = action.payload;
+      const { user, token } = action.payload;
       localStorage.setItem(
         "auth",
         JSON.stringify({
@@ -103,12 +104,14 @@ const authSlice = createSlice({
           user,
           isLoggedIn: true,
           verified: true,
+          token: token,
         })
       );
       state.user = user;
       state.verified = true;
       state.isLoggedIn = true;
       state.loading = false;
+      state.token = token;
     },
     signout: (state) => {
       Object.assign(state, initialState);

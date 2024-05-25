@@ -42,7 +42,6 @@ import {
 } from "./comp";
 
 function App() {
-  axios.defaults.withCredentials = true;
   const [theme, setTheme] = useState("light");
 
   const changeTheme = useCallback(() => {

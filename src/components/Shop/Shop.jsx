@@ -10,7 +10,6 @@ import {
   Tooltip,
   Button,
   Collapse,
-  Layout,
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import AppLayout from "../../config/AppLayout/AppLayout";
@@ -22,7 +21,7 @@ import FooterUser from "../Footer/Footer";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [category, setCategory] = useState("");
@@ -31,111 +30,57 @@ const Shop = () => {
   const [colors, setColors] = useState([]);
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [DressStyleNames, setDressStyleNames] = useState([]);
-  const [open, setOpen] = useState(true);
-  const [numberOfLoadedProducts, setNumberOfLoadedProducts] = useState(0);
-  const [collapsed, setCollapsed] = useState(false);
-
-  const handleCollapse = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const siderWidth = 250;
-
-  const SiderContent = () => (
-    <div className="sider-content">
-      <div className="flex flex-col font-['Causten'] w-[30%]">
-        <div className="w-full flex items-center justify-between">
-          <div className="flex gap-[10px] items-center justify-between w-full cursor-pointer">
-            <h2 className="filter text-[#807d7e] text-[1.375rem] font-semibold leading-[normal]">
-              Filters
-            </h2>
-            <Tooltip title="Hide" onClick={() => setOpen(!open)}>
-              <DownOutlined
-                onClick={() => setOpen(!open)}
-                style={{ rotate: "90deg" }}
-              />
-            </Tooltip>
-          </div>
-        </div>
-        <Divider className="h-px opacity-[0.4] bg-[#bebcbd]" />
-        <Collapse
-          size="large"
-          expandIconPosition={"end"}
-          bordered={false}
-          expandIcon={({ isActive }) => (
-            <DownOutlined rotate={isActive ? 180 : 0} />
-          )}
-          defaultActiveKey={["3"]}
-          ghost
-          accordion
-          items={items}
-          className="!p-0"
-        />
-        <Divider className="h-px opacity-[0.4] bg-[#bebcbd] !mb-0" />
-        <Button onClick={handleReset} className="w-full">
-          Reset all filters
-        </Button>
-      </div>
-    </div>
-  );
-
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await axios.get(`${process.env.API_URL}/categories/names`);
-  //       setCategoriesNames(res.data.categoriesNames);
-  //       const res2 = await axios.get(
-  //         `${process.env.API_URL}/dress-styles/names`
-  //       );
-  //       setDressStyleNames(res2.data.DressStylesNames);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(
-        `${process.env.API_URL}/products/filter`,
-        {
-          params: {
-            minPrice,
-            maxPrice,
-            category,
-            dressStyle,
-            colors,
-            sizes,
-            limit: 3,
-            offset: numberOfLoadedProducts,
-          },
-        }
-      );
-
-      if (data.success) {
-        setProducts((prevData) => [...prevData, ...data.products]);
-        setNumberOfLoadedProducts(
-          (prevCount) => prevCount + data.products.length
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${process.env.API_URL}/categories/names`);
+        setCategoriesNames(res.data.categoriesNames);
+        const res2 = await axios.get(
+          `${process.env.API_URL}/dress-styles/names`
         );
+        setDressStyleNames(res2.data.DressStylesNames);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching products:", error.response.data.message);
-      message.error(error.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchData();
+  }, []);
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, [minPrice, maxPrice, category, dressStyle, colors, sizes]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get(
+          `${process.env.API_URL}/products/filter`,
+          {
+            params: {
+              minPrice,
+              maxPrice,
+              category,
+              dressStyle,
+              colors,
+              sizes,
+            },
+          }
+        );
+
+        if (data.success) {
+          setProducts(data.products);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error.response.data.message);
+        message.error(error.response.data.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [minPrice, maxPrice, category, dressStyle, colors, sizes]);
 
   const handlePriceRangeChange = (value) => {
     setMinPrice(value[0]);
@@ -165,7 +110,6 @@ const Shop = () => {
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
               onClick={() => setCategory(categoryObj._id)}
-              key={categoryObj._id}
             >
               {categoryObj?.name}
             </p>
@@ -250,7 +194,6 @@ const Shop = () => {
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
               onClick={() => setDressStyle(Obj?._id)}
-              key={Obj?._id}
             >
               {Obj?.name}
             </p>
@@ -261,116 +204,108 @@ const Shop = () => {
     },
   ];
 
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
-
-  function handleScroll() {
-    if (
-      window.innerHeight + (document.documentElement.scrollTop + 770) >=
-      document.documentElement.scrollHeight
-    ) {
-      fetchData();
-    }
-  } 
-
-  const handleCollapseChange = (value) => {
-    setOpen(value.length > 0); // Open only if at least one panel is expanded
-  };
-
   return (
     <div>
       <AppLayout>
         <Spin spinning={loading} tip="Loading..." className="w-full">
           <Flex gap={50} className="shop-container justify-between w-full">
-            {/* Left portion = collapse */}
-            <Collapse
-              bordered={false} // Remove border for cleaner look
-              expandIconPosition={"end"} // Position expand icon at the end
-              // accordion // Only allow one panel to be open at a time
-              activeKey={open ? ["1"] : []} // Set initial active key to open
-              onChange={handleCollapseChange}
-              className="!p-0" // Remove default padding
-            >
-              {items.map((item) => (
-                <Collapse.Panel header={item.label} key={item.key}>
-                  {item.children}
-                </Collapse.Panel>
-              ))}
-            </Collapse>
-          </Flex>
-        </Spin>
-        <Layout className="shop-layout">
-          <Layout.Sider
-            collapsible
-            collapsed={collapsed}
-            width={siderWidth}
-            trigger={null} // Remove default trigger
-            onCollapse={handleCollapse}
-          >
-            <SiderContent />
-          </Layout.Sider>
-          <Layout.Content>
-            <Spin spinning={loading} tip="Loading..." className="w-full">
-              {/* ... your product list content */}
-              {/* Right portion = Products List */}
-              <div className="w-full flex flex-col items-start">
-                <CommonHeading text={"Shop"} className={"!mt-0"} />
-                <div
-                  id="product-list"
-                  className="card-wrap flex flex-wrap justify-between gap-[24px]"
-                >
-                  {products.map((product, index) => (
-                    <div
-                      key={index}
-                      className={`card card${index} rounded-lg w-[282px] h-[460px] bg-white mb-[50px] relative cursor-pointer overflow-hidden`}
+            <div className="flex flex-col font-['Causten'] w-[295px]">
+              <div className="w-full flex items-center justify-between">
+                <div className="flex gap-[10px] items-center justify-between w-full">
+                  <h2 className="filter text-[#807d7e] text-[1.375rem] font-semibold leading-[normal]">
+                    Filters
+                  </h2>
+                  <Tooltip title="Filters">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="17"
+                      height="20"
+                      viewBox="0 0 17 20"
+                      fill="none"
                     >
-                      <Image
-                        className="hover:scale-110 ease-in-out duration-500 rounded-lg object-cover"
-                        onClick={() => navigate(`/product/${product?._id}`)}
-                        src={product?.images[0]?.url}
-                        alt={product.name}
-                        width={282}
-                        height={370}
-                        preview={false}
-                        loading="lazy"
+                      <path
+                        d="M2.83333 6.33333L2.83333 1.75M2.83333 18.25L2.83333 10M13.8333 18.25L13.8333 10M8.33333 18.25V13.6667M8.33333 10V1.75M13.8333 6.33333L13.8333 1.75M1 6.33333H4.66667M6.5 13.6667H10.1667M12 6.33333L15.6667 6.33333"
+                        stroke="#807D7E"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
                       />
-                      <WishlistButton
-                        wishlists={product?.wishlists}
-                        productId={product?._id}
-                      />
-                      <div className="flex justify-between items-center mt-[30px] px-1">
-                        <div
-                          key={product?._id}
-                          className="flex flex-col gap-[5px]"
-                        >
-                          <Link to={`/product/${product?._id}`}>
-                            <span className="text-[20px] text-[#3c4242] font-['Causten'] font-semibold leading-[normal] capitalize">
-                              {product?.name}
-                            </span>
-                          </Link>
-                          <div className="text-[#807D7E] font-['Causten'] text-sm leading-[normal]">
-                            {product?.brand}
-                          </div>
-                        </div>
-                        <p className="dis-fcc text-[#3c4242] font-['Causten'] text-sm font-bold leading-[normal] rounded-lg bg-[#F6F6F6] w-[82px] h-[37px]">
-                          {Intl.NumberFormat(undefined, {
-                            style: "decimal",
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(product?.price)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    </svg>
+                  </Tooltip>
                 </div>
               </div>
-            </Spin>
-          </Layout.Content>
-        </Layout>
+              <Divider className="h-px opacity-[0.4] bg-[#bebcbd]" />
+
+              <Collapse
+                size="large"
+                expandIconPosition={"end"}
+                bordered={false}
+                expandIcon={({ isActive }) => (
+                  <DownOutlined rotate={isActive ? 180 : 0} />
+                )}
+                defaultActiveKey={["3"]}
+                ghost
+                accordion
+                items={items}
+                className="!p-0"
+              />
+              <Divider className="h-px opacity-[0.4] bg-[#bebcbd] !mb-0" />
+
+              <Button onClick={handleReset} className="w-full">
+                Reset all filters
+              </Button>
+            </div>
+            <div className="w-[1095px]">
+              <CommonHeading text={"Shop"} className={"!mt-0"} />
+              <div
+                id="product-list"
+                className="card-wrap flex flex-wrap justify-between gap-[24px]"
+              >
+                {products.map((product, index) => (
+                  <div
+                    key={index}
+                    className={`card card${index} rounded-lg w-[282px] h-[460px] bg-white mb-[50px] relative cursor-pointer overflow-hidden`}
+                  >
+                    <Image
+                      className="hover:scale-110 ease-in-out duration-500 rounded-lg object-cover"
+                      onClick={() => navigate(`/product/${product?._id}`)}
+                      src={product?.images[0]?.url}
+                      alt={product.name}
+                      width={282}
+                      height={370}
+                      preview={false}
+                    />
+                    <WishlistButton
+                      wishlists={product?.wishlists}
+                      productId={product?._id}
+                    />
+                    <div className="flex justify-between items-center mt-[30px] px-1">
+                      <div
+                        key={product?._id}
+                        className="flex flex-col gap-[5px]"
+                      >
+                        <Link to={`/product/${product?._id}`}>
+                          <span className="text-[20px] text-[#3c4242] font-['Causten'] font-semibold leading-[normal] capitalize">
+                            {product?.name}
+                          </span>
+                        </Link>
+                        <div className="text-[#807D7E] font-['Causten'] text-sm leading-[normal]">
+                          {product?.brand}
+                        </div>
+                      </div>
+                      <p className="dis-fcc text-[#3c4242] font-['Causten'] text-sm font-bold leading-[normal] rounded-lg bg-[#F6F6F6] w-[82px] h-[37px]">
+                        {Intl.NumberFormat(undefined, {
+                          style: "decimal",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).format(product?.price)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Flex>
+        </Spin>
       </AppLayout>
       <FooterUser />
     </div>
