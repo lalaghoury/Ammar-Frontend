@@ -10,7 +10,6 @@ const initialState = {
   isLoggedIn: false,
   loading: false,
   error: null,
-  token: "",
   verified: false,
 };
 
@@ -24,7 +23,7 @@ export const useAuthActions = () => {
         values
       );
       if (data.success) {
-        const { user, token } = data;
+        const { user } = data;
         dispatch(signinAction({ user, token }));
         message.success(data.message);
         return true;
@@ -96,7 +95,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     signin: (state, action) => {
-      const { user, token } = action.payload;
+      const { user } = action.payload;
       localStorage.setItem(
         "auth",
         JSON.stringify({
@@ -104,14 +103,12 @@ const authSlice = createSlice({
           user,
           isLoggedIn: true,
           verified: true,
-          token: token,
         })
       );
       state.user = user;
       state.verified = true;
       state.isLoggedIn = true;
       state.loading = false;
-      state.token = token;
     },
     signout: (state) => {
       Object.assign(state, initialState);

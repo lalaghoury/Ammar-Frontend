@@ -12,12 +12,11 @@ export default function PrivateRoute() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { verified, token } = useSelector((state) => state.auth);
+  const { verified } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const verifyLogin = async () => {
       try {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ConfigProvider, message } from "antd";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import axios from "axios";
 import { themeConfig } from "./themeConfig";
 import {
   SignUpPage,
@@ -40,11 +39,8 @@ import {
   OrderDetails,
   CategoryDetails,
 } from "./comp";
-import { useSelector } from "react-redux";
 
 function App() {
-  const { token } = useSelector((state) => state.auth);
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   const [theme, setTheme] = useState("light");
 
   const changeTheme = useCallback(() => {
