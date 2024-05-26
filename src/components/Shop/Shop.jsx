@@ -11,89 +11,166 @@ import {
   Button,
   Collapse,
 } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import "./Shop.scss";
 import { DownOutlined } from "@ant-design/icons";
 import WishlistButton from "../WishlistButton";
 import CommonHeading from "../CommonHeading/CommonHeading";
 import FooterUser from "../Footer/Footer";
+import queryString from "query-string";
 
 const Shop = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  //Innitial states for categories & dress styles
+  const [categoriesNames, setCategoriesNames] = useState([]);
+  const [dressStyleNames, setDressStyleNames] = useState([]);
+
+  // Initial states for filters
+  const [minPrice, setMinPrice] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(null);
   const [category, setCategory] = useState("");
   const [dressStyle, setDressStyle] = useState("");
-  const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
-  const [categoriesNames, setCategoriesNames] = useState([]);
-  const [DressStyleNames, setDressStyleNames] = useState([]);
-  const navigate = useNavigate();
+  const [sizes, setSizes] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [filtersInitialized, setFiltersInitialized] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const res = await axios.get(`${process.env.API_URL}/categories/names`);
-        setCategoriesNames(res.data.categoriesNames);
-        const res2 = await axios.get(
+        const categoriesResponse = await axios.get(
+          `${process.env.API_URL}/categories/names`
+        );
+        const dressStylesResponse = await axios.get(
           `${process.env.API_URL}/dress-styles/names`
         );
-        setDressStyleNames(res2.data.DressStylesNames);
-        setLoading(false);
+
+        setCategoriesNames(categoriesResponse.data.categoriesNames);
+        setDressStyleNames(dressStylesResponse.data.DressStylesNames);
       } catch (error) {
         console.error("Error fetching products:", error);
-        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
+  // Function to get ID from name
+  const getIdFromName = (name, list) => {
+    const item = list.find((item) => item.name === name);
+    return item ? item.id : "";
+  };
+
+  // Function to parse and set filter state from URL
+  const setFiltersFromURL = () => {
+    const parsed = queryString.parse(location.search);
+    if (parsed.minPrice) setMinPrice(Number(parsed.minPrice));
+    if (parsed.maxPrice) setMaxPrice(Number(parsed.maxPrice));
+    if (parsed.category)
+      setCategory(getIdFromName(parsed.category, categoriesNames));
+    if (parsed.dressStyle)
+      setDressStyle(getIdFromName(parsed.dressStyle, dressStyleNames));
+    if (parsed.colors) setColors(parsed.colors.split(","));
+    if (parsed.sizes) setSizes(parsed.sizes.split(","));
+    setFiltersInitialized(true);
+  };
+
+  // Parse filters from URL query parameters on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `${process.env.API_URL}/products/filter`,
-          {
-            params: {
-              minPrice,
-              maxPrice,
-              category,
-              dressStyle,
-              colors,
-              sizes,
-            },
+    if (categoriesNames.length > 0 && dressStyleNames.length > 0) {
+      setFiltersFromURL();
+    }
+  }, [location.search, categoriesNames, dressStyleNames]);
+
+  useEffect(() => {
+    if (filtersInitialized) {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const { data } = await axios.get(
+            `${process.env.API_URL}/products/filter`,
+            {
+              params: {
+                minPrice,
+                maxPrice,
+                category,
+                dressStyle,
+                colors,
+                sizes,
+              },
+            }
+          );
+
+          if (data.success) {
+            setProducts(data.products);
           }
-        );
-
-        if (data.success) {
-          setProducts(data.products);
+        } catch (error) {
+          console.error(
+            "Error fetching products:",
+            error.response?.data?.message
+          );
+          message.error(error.response?.data?.message);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching products:", error.response.data.message);
-        message.error(error.response.data.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [minPrice, maxPrice, category, dressStyle, colors, sizes]);
+      };
 
-  const handlePriceRangeChange = (value) => {
-    setMinPrice(value[0]);
-    setMaxPrice(value[1]);
+      fetchData();
+    }
+  }, [
+    filtersInitialized,
+    minPrice,
+    maxPrice,
+    category,
+    dressStyle,
+    colors,
+    sizes,
+  ]);
+
+  // Generalized handleChange function
+  const handleChange = (filterName, value) => {
+    const filterStateUpdaters = {
+      minPrice: setMinPrice,
+      maxPrice: setMaxPrice,
+      category: setCategory,
+      dressStyle: setDressStyle,
+      colors: setColors,
+      sizes: setSizes,
+    };
+
+    filterStateUpdaters[filterName](value);
+
+    const currentFilters = {
+      minPrice,
+      maxPrice,
+      category,
+      dressStyle,
+      colors,
+      sizes,
+      [filterName]: value,
+    };
+
+    // Filter out null or empty values
+    const validFilters = Object.fromEntries(
+      Object.entries(currentFilters).filter(
+        ([key, val]) => val != null && val !== ""
+      )
+    );
+
+    const query = queryString.stringify(validFilters, { arrayFormat: "comma" });
+    navigate({ search: `?${query}` });
   };
 
   const handleReset = () => {
-    setCategory("");
-    setDressStyle("");
-    setColors([]);
-    setSizes([]);
-    setMinPrice(0);
-    setMaxPrice(1000);
+    handleChange("category", "");
+    handleChange("dressStyle", "");
+    handleChange("colors", []);
+    handleChange("sizes", []);
+    handleChange("minPrice", 0);
+    handleChange("maxPrice", 1000);
   };
 
   const items = [
@@ -109,7 +186,8 @@ const Shop = () => {
           {categoriesNames?.map((categoryObj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
-              onClick={() => setCategory(categoryObj._id)}
+              onClick={() => handleChange("category", categoryObj._id)}
+              key={categoryObj._id}
             >
               {categoryObj?.name}
             </p>
@@ -131,7 +209,10 @@ const Shop = () => {
             min={0}
             max={1000}
             value={[minPrice, maxPrice]}
-            onChange={handlePriceRangeChange}
+            onChange={(val) => {
+              handleChange("minPrice", val[0]);
+              handleChange("maxPrice", val[1]);
+            }}
             className="mb-5 text-[#8A33FD]"
           />
           <Flex align="center" gap={10}>
@@ -170,7 +251,7 @@ const Shop = () => {
           Colors
         </h1>
       ),
-      children: <Colors colors={colors} setColors={setColors} />,
+      children: <Colors colors={colors} handleChange={handleChange} />,
     },
 
     {
@@ -178,7 +259,7 @@ const Shop = () => {
       label: (
         <h1 className="text-[#8a8989] font-semibold leading-[normal]">Size</h1>
       ),
-      children: <Sizes sizes={sizes} setSizes={setSizes} />,
+      children: <Sizes sizes={sizes} handleChange={handleChange} />,
     },
 
     {
@@ -190,10 +271,11 @@ const Shop = () => {
       ),
       children: (
         <div>
-          {DressStyleNames?.map((Obj) => (
+          {dressStyleNames?.map((Obj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
-              onClick={() => setDressStyle(Obj?._id)}
+              onClick={() => handleChange("dressStyle", Obj?._id)}
+              key={Obj?._id}
             >
               {Obj?.name}
             </p>
@@ -312,7 +394,7 @@ const Shop = () => {
   );
 };
 
-const Colors = ({ colors, setColors }) => {
+const Colors = ({ colors, handleChange }) => {
   const colorsArr = [
     { colorName: "Purple", backgroundColor: "#8434E1" },
     { colorName: "Black", backgroundColor: "#252525" },
@@ -332,20 +414,19 @@ const Colors = ({ colors, setColors }) => {
     const newColors = colors.includes(addedColor)
       ? colors.filter((color) => color !== addedColor)
       : [...colors, addedColor];
-    setColors(newColors);
+    handleChange("colors", newColors);
 
     const divElement = document.getElementById(`${addedColor}`);
+    const childrens = divElement?.children;
 
-    const divChildElement = document.querySelector(
-      `#${addedColor} #${addedColor}`
-    );
-
-    if (colors.includes(addedColor)) {
-      divElement.style.color = "";
-      divChildElement.style.border = "";
-    } else {
-      divElement.style.color = "#8a33fd";
-      divChildElement.style.border = "#ddd dashed 3px";
+    if (divElement) {
+      if (colors.includes(addedColor)) {
+        childrens[0].style.border = "";
+        childrens[1].style.color = "";
+      } else {
+        childrens[0].style.border = "#ddd dashed 3px";
+        childrens[1].style.color = "#8a33fd";
+      }
     }
   };
 
@@ -361,10 +442,19 @@ const Colors = ({ colors, setColors }) => {
           >
             <div
               className="color-block w-12 h-12 rounded-xl cursor-pointer"
-              id={color.colorName}
-              style={{ backgroundColor: color.backgroundColor }}
+              style={{
+                backgroundColor: color.backgroundColor,
+                border: colors.includes(color.colorName)
+                  ? "#ddd dashed 3px"
+                  : "",
+              }}
             />
-            <div className="color-name text-sm font-semibold cursor-pointer">
+            <div
+              className="color-name text-sm font-semibold cursor-pointer"
+              style={{
+                color: colors.includes(color.colorName) ? "#8a33fd" : "",
+              }}
+            >
               {color.colorName}
             </div>
           </div>
@@ -374,7 +464,7 @@ const Colors = ({ colors, setColors }) => {
   );
 };
 
-const Sizes = ({ sizes, setSizes }) => {
+const Sizes = ({ sizes, handleChange }) => {
   const generateSizeItems = () => {
     return ["XXS", "XL", "XS", "S", "M", "L", "XXL", "3XL", "4XL"].map(
       (size) => (
@@ -383,6 +473,10 @@ const Sizes = ({ sizes, setSizes }) => {
           onClick={() => handleSizeClick(size)}
           key={size}
           id={size}
+          style={{
+            backgroundColor: sizes.includes(size) ? "#807d7e" : "#fff",
+            color: sizes.includes(size) ? "#fff" : "#807d7e",
+          }}
         >
           {size}
         </div>
@@ -395,7 +489,7 @@ const Sizes = ({ sizes, setSizes }) => {
       ? sizes.filter((size) => size !== addedSize)
       : [...sizes, addedSize];
 
-    setSizes(newSizes);
+    handleChange("sizes", newSizes);
 
     const divElement = document.getElementById(`${addedSize}`);
     if (sizes.includes(addedSize)) {
@@ -406,6 +500,7 @@ const Sizes = ({ sizes, setSizes }) => {
       divElement.style.color = "#fff";
     }
   };
+
   return (
     <div>
       <div className={`flex gap-[20px] flex-wrap`}>{generateSizeItems()}</div>
