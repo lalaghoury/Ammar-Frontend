@@ -39,150 +39,148 @@ const CartPage = () => {
     );
 
   return (
-    <Spin spinning={loading} tip="Loading...">
-      <AppLayout>
-        {cart?.items?.length > 0 ? (
+    <AppLayout>
+      {cart?.items?.length > 0 ? (
+        <div>
+          <Title>Cart</Title>
+
           <div>
-            <Title>Cart</Title>
-
-            <div>
-              <Table
-                dataSource={cart?.items}
-                pagination={false}
-                rowKey={(record) => record._id}
-                columns={[
-                  {
-                    title: "Product Details",
-                    dataIndex: "productId",
-                    key: "details",
-                    render: (productId) => (
-                      <div className="flex gap-3 items-center justify-between w-full">
-                        <span style={{ width: 90 }}>
-                          <Image
-                            src={productId?.thumbnail}
-                            alt={productId?.name}
-                            width={90}
-                            height={90}
-                            className="rounded-[9px] object-center"
-                            fallback="https://via.placeholder.com/90x90"
-                          />
-                        </span>
-                        <span style={{ flex: 1 }}>
-                          <Title level={5}>{productId?.name}</Title>
-                        </span>
-                      </div>
-                    ),
-                  },
-                  {
-                    title: "Price",
-                    dataIndex: "productId",
-                    key: "price",
-                    render: (productId) => productId?.price,
-                  },
-                  {
-                    title: "Quantity",
-                    dataIndex: "quantity",
-                    key: "quantity",
-                    render: (quantity, record) => (
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Button
-                          style={{ marginRight: 8 }}
-                          disabled={quantity === 1}
-                          onClick={() =>
-                            handleUpdateQuantity(
-                              record.productId?._id,
-                              quantity - 1,
-                              record.productId?.price
-                            )
-                          }
-                        >
-                          -
-                        </Button>
-                        <span>{quantity}</span>
-                        <Button
-                          style={{ marginLeft: 8 }}
-                          onClick={() =>
-                            handleUpdateQuantity(
-                              record.productId?._id,
-                              quantity + 1,
-                              record.productId?.price
-                            )
-                          }
-                        >
-                          +
-                        </Button>
-                      </div>
-                    ),
-                  },
-                  {
-                    title: "Shipping",
-                    dataIndex: "productId",
-                    key: "shipping",
-                    render: (productId) =>
-                      productId.shipping === 0 ? "Free" : productId.shipping,
-                  },
-                  {
-                    title: "Remove",
-                    dataIndex: "productId",
-                    key: "remove",
-                    render: (_, record) => (
-                      <>
-                        <Button
-                          type="warning"
-                          color="#8A33FD"
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDelete(record._id)}
+            <Table
+              dataSource={cart?.items}
+              pagination={false}
+              rowKey={(record) => record._id}
+              columns={[
+                {
+                  title: "Product Details",
+                  dataIndex: "productId",
+                  key: "details",
+                  render: (productId) => (
+                    <div className="flex gap-3 items-center justify-between w-full">
+                      <span style={{ width: 90 }}>
+                        <Image
+                          src={productId?.thumbnail}
+                          alt={productId?.name}
+                          width={90}
+                          height={90}
+                          className="rounded-[9px] object-center"
+                          fallback="https://via.placeholder.com/90x90"
                         />
-                      </>
-                    ),
-                  },
-                ]}
-              />
-            </div>
-
-            <Flex
-              justify="space-between"
-              style={{
-                width: "100%",
-                background: "#F6F6F6",
-              }}
-              className={`p-10 ${cart.couponApplied && "place-content-end"}`}
-            >
-              {!cart.couponApplied && (
-                <Flex vertical gap={30} style={{ width: "35%" }}>
-                  <Flex vertical gap={10}>
-                    <Title level={3}>Discount Codes</Title>
-                    <p>Enter your coupon code if you have one.</p>
-                  </Flex>
-                  <Flex>
-                    <Input
-                      style={{
-                        padding: "0 0 0 10px",
-                        border: "1px solid #ccc",
-                        borderRadius: 5,
-                      }}
-                      suffix={
-                        <>
-                          <Button type="primary" onClick={() => applyCoupon()}>
-                            Apply Coupon
-                          </Button>
-                        </>
-                      }
-                      placeholder="Enter your coupon code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                    />
-                  </Flex>
-                </Flex>
-              )}
-              <PriceDetails useWidth={"33%"} />
-            </Flex>
+                      </span>
+                      <span style={{ flex: 1 }}>
+                        <Title level={5}>{productId?.name}</Title>
+                      </span>
+                    </div>
+                  ),
+                },
+                {
+                  title: "Price",
+                  dataIndex: "productId",
+                  key: "price",
+                  render: (productId) => productId?.price,
+                },
+                {
+                  title: "Quantity",
+                  dataIndex: "quantity",
+                  key: "quantity",
+                  render: (quantity, record) => (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Button
+                        style={{ marginRight: 8 }}
+                        disabled={quantity === 1}
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            record.productId?._id,
+                            quantity - 1,
+                            record.productId?.price
+                          )
+                        }
+                      >
+                        -
+                      </Button>
+                      <span>{quantity}</span>
+                      <Button
+                        style={{ marginLeft: 8 }}
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            record.productId?._id,
+                            quantity + 1,
+                            record.productId?.price
+                          )
+                        }
+                      >
+                        +
+                      </Button>
+                    </div>
+                  ),
+                },
+                {
+                  title: "Shipping",
+                  dataIndex: "productId",
+                  key: "shipping",
+                  render: (productId) =>
+                    productId.shipping === 0 ? "Free" : productId.shipping,
+                },
+                {
+                  title: "Remove",
+                  dataIndex: "productId",
+                  key: "remove",
+                  render: (_, record) => (
+                    <>
+                      <Button
+                        type="warning"
+                        color="#8A33FD"
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record._id)}
+                      />
+                    </>
+                  ),
+                },
+              ]}
+            />
           </div>
-        ) : (
-          <EmptyCart />
-        )}
-      </AppLayout>
-    </Spin>
+
+          <Flex
+            justify="space-between"
+            style={{
+              width: "100%",
+              background: "#F6F6F6",
+            }}
+            className={`p-10 ${cart.couponApplied && "place-content-end"}`}
+          >
+            {!cart.couponApplied && (
+              <Flex vertical gap={30} style={{ width: "35%" }}>
+                <Flex vertical gap={10}>
+                  <Title level={3}>Discount Codes</Title>
+                  <p>Enter your coupon code if you have one.</p>
+                </Flex>
+                <Flex>
+                  <Input
+                    style={{
+                      padding: "0 0 0 10px",
+                      border: "1px solid #ccc",
+                      borderRadius: 5,
+                    }}
+                    suffix={
+                      <>
+                        <Button type="primary" onClick={() => applyCoupon()}>
+                          Apply Coupon
+                        </Button>
+                      </>
+                    }
+                    placeholder="Enter your coupon code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                  />
+                </Flex>
+              </Flex>
+            )}
+            <PriceDetails useWidth={"33%"} />
+          </Flex>
+        </div>
+      ) : (
+        <EmptyCart />
+      )}
+    </AppLayout>
   );
 };
 

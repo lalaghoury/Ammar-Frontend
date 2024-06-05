@@ -11,10 +11,9 @@ import {
 } from "@ant-design/icons";
 import { Badge, Button, Input, Select, Space } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthEffect } from "../../redux/slices/authSlice";
+import { authThunks, useAuthEffect } from "../../redux/slices/authSlice";
 import { useWishlistEffect } from "../../redux/slices/wishlistSlice";
 import { useDispatch } from "react-redux";
-import { signout as signoutAction } from "../../redux/slices/authSlice";
 import { useCartEffect } from "../../redux/slices/cartSlice";
 
 export const Logo = () => {
@@ -276,7 +275,8 @@ export const Hamburger = () => {
   };
 
   const handleSignout = () => {
-    dispatch(signoutAction());
+    setIsDropdownOpen(false);
+    dispatch(authThunks.signout());
   };
 
   return (
@@ -350,13 +350,7 @@ export const Hamburger = () => {
                     >
                       My Profile
                     </Button>
-                    <Button
-                      className="  bold"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        handleSignout();
-                      }}
-                    >
+                    <Button className="  bold" onClick={handleSignout}>
                       Logout
                     </Button>
                   </div>

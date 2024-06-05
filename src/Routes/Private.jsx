@@ -3,12 +3,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { signin, useAuthEffect } from "../redux/slices/authSlice";
+import { signin } from "../redux/slices/authSlice";
 import { useSelector } from "react-redux";
 import { signout } from "../redux/slices/authSlice";
 
 export default function PrivateRoute() {
-  useAuthEffect();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -17,9 +16,7 @@ export default function PrivateRoute() {
   useEffect(() => {
     const verifyLogin = async () => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/auth/verify`, {
-          withCredentials: true,
-        });
+        const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));
           return;

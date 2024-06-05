@@ -11,6 +11,7 @@ const initialState = {
   loading: false,
   error: null,
   verified: false,
+  token: null,
 };
 
 export const useAuthActions = () => {
@@ -29,27 +30,18 @@ export const useAuthActions = () => {
         return true;
       }
     } catch (error) {
-      message.error(
-        error.response.data.message
-          ? error.response.data.message
-          : "Something went wrong"
-      );
-      console.log(error.response.data);
+      message.error(error.response.data.message || "Something went wrong");
       return false;
     }
   };
 
   const signout = async () => {
     try {
-      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
-      if (data.success) {
-        message.success(data.message, 1, () => {
-          dispatch(signoutAction());
-        });
-      }
+      await axios.post(`${process.env.API_URL}/auth/signout`);
+      dispatch(signoutAction());
+      message.success("Logged out successfully");
     } catch (error) {
       message.error(error.response.data.message);
-      console.log(error.response.data.message);
     }
   };
 
@@ -57,25 +49,19 @@ export const useAuthActions = () => {
 };
 
 export const authThunks = {
-  signout: createAsyncThunk(
-    "auth/signout",
-    async (_, { dispatch, rejectWithValue }) => {
-      try {
-        const { data } = await axios.post(
-          `${process.env.API_URL}/auth/signout`
-        );
-        if (data.success) {
-          message.success(data.message, 1, () => {
-            dispatch(signoutAction());
-          });
-          return true;
-        }
-      } catch (error) {
-        console.error("Error logging out:", error.response.data.message);
-        return rejectWithValue(error.response.data.message);
+  signout: createAsyncThunk("auth/signout", async (_, { dispatch }) => {
+    try {
+      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
+      if (data.success) {
+        dispatch(signoutAction());
+        window.location.href = "/sign-in";
+        return true;
       }
+    } catch (error) {
+      console.error("Error logging out:", error.response.data.message);
+      throw error.response.data.message;
     }
-  ),
+  }),
 };
 
 export const useAuthEffect = () => {
@@ -84,8 +70,8 @@ export const useAuthEffect = () => {
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     if (auth) {
-      const { user, token } = JSON.parse(auth);
-      dispatch(signinAction({ user, token }));
+      const { user } = JSON.parse(auth);
+      dispatch(signinAction({ user }));
     }
   }, [dispatch]);
 };
@@ -99,21 +85,20 @@ const authSlice = createSlice({
       localStorage.setItem(
         "auth",
         JSON.stringify({
-          ...state,
           user,
           isLoggedIn: true,
           verified: true,
         })
       );
-      state.user = user;
-      state.verified = true;
-      state.isLoggedIn = true;
-      state.loading = false;
+      Object.assign(state, {
+        user,
+        isLoggedIn: true,
+        verified: true,
+      });
     },
     signout: (state) => {
-      Object.assign(state, initialState);
       localStorage.removeItem("auth");
-      window.location.href = "/sign-in";
+      Object.assign(state, initialState);
     },
   },
 });

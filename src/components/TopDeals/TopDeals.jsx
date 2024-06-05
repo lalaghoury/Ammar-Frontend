@@ -6,7 +6,7 @@ const TopDeals = () => {
   return (
     <AppLayout>
       <div className="flex-shrink-0 w-full h-[22.3125rem] rounded-xl border-[1.069px] border-[#323232] bg-[#3c4242]">
-        <div className="text-white text-center font-['Sans C'] text-[3.125rem] font-extrabold leading-[normal] mt-10">
+        <div className="text-white text-center font-['Sans C'] text-[3.125rem] font-extrabold leading-[normal] mt-10 deals-heading">
           Top Brands Deal
         </div>
         <div className="text-white text-center font-['Causten'] text-[1.375rem] font-bold leading-[normal] mt-[25px]">
