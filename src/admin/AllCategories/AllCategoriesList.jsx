@@ -54,8 +54,8 @@ const columns = [
   {
     title: "Action",
     dataIndex: "action_id",
-    render: (_id) => (
-      <Link to={`/dashboard/users/edit-user//${_id}`}>
+    render: (_id, record) => (
+      <Link className="hov-scale" to={`/category/${record?.slug}`}>
         <Button type="primary">View Details</Button>
       </Link>
     ),
@@ -98,11 +98,11 @@ const AllCategoriesList = () => {
         <Table
           columns={columns}
           dataSource={categories.map((catObj) => ({
-            key: catObj._id,
+            key: catObj?._id,
             name: {
-              name: catObj.name,
-              image: catObj.image,
-              slug: catObj.slug,
+              name: catObj?.name,
+              image: catObj?.image,
+              slug: catObj?.slug,
             },
             createdAt: new Intl.DateTimeFormat("en-US", {
               year: "numeric",
@@ -111,9 +111,10 @@ const AllCategoriesList = () => {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
-            }).format(new Date(catObj.createdAt)),
-            action_id: catObj._id,
-            products_no: catObj.products.length,
+            }).format(new Date(catObj?.createdAt)),
+            action_id: catObj?._id,
+            products_no: catObj?.products.length,
+            slug: catObj?.slug,
           }))}
         />
       )}

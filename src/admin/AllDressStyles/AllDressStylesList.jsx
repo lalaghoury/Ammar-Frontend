@@ -56,7 +56,7 @@ const columns = [
     title: "Action",
     dataIndex: "action_id",
     render: (_id) => (
-      <Link to={`/dashboard/users/edit-user//${_id}`}>
+      <Link className="hov-scale" to={`/dress-style/${record?.slug}`}>
         <Button type="primary">View Details</Button>
       </Link>
     ),
@@ -115,6 +115,7 @@ const AllDressStylesList = () => {
             }).format(new Date(Obj.createdAt)),
             action_id: Obj._id,
             products_no: Obj.products.length,
+            slug: Obj?.slug,
           }))}
         />
       )}

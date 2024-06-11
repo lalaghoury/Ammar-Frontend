@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import DropIn from "braintree-web-drop-in-react";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Spin,
   Form,
@@ -57,7 +58,7 @@ const CheckoutPage = () => {
   }, []);
 
   const handlePayment = async () => {
-    try {
+    if (paymentMethod === "card") {
       if (!shippingAddress) {
         message.info("Please add a billing address before making payment");
         return;
@@ -74,32 +75,61 @@ const CheckoutPage = () => {
         color: item.color,
         size: item.size,
       }));
+      try {
+        if (!instance) {
+          throw new Error("Drop-in instance not available");
+        }
+        const { nonce } = await instance.requestPaymentMethod();
 
-      if (!instance) {
-        throw new Error("Drop-in instance not available");
+        dispatch(
+          cartThunks.handlePayment({
+            nonce,
+            amount: cart.total,
+            products,
+            shipping_address: shippingAddress,
+            billing_address: billingAddress,
+            navigate,
+          })
+        );
+      } catch (error) {
+        console.error("Payment Error:", error.message);
+        message.error("Payment Error: " + error.message);
       }
-      const { nonce } = await instance.requestPaymentMethod();
+    }
 
-      dispatch(
-        cartThunks.handlePayment({
-          nonce,
-          amount: cart.total,
-          products,
-          shipping_address: shippingAddress,
-          billing_address: billingAddress,
-          navigate,
-        })
-      );
-    } catch (error) {
-      console.error("Payment Error:", error.message);
-      message.error("Payment Error: " + error.message);
+    if (paymentMethod === "stripe") {
+      try {
+        const stripe = await loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
+
+        const { data } = await axios.post(
+          `${process.env.API_URL}/checkout/stripe`,
+          {
+            products: cart?.items?.map((item) => ({
+              productId: item.productId._id,
+              quantity: item.quantity,
+              name: item.productId.name,
+              thumbnail: item.productId.thumbnail,
+              price: item.productId.price,
+            })),
+          }
+        );
+
+        if (data.success) {
+          const result = stripe.redirectToCheckout({
+            sessionId: data.sessionId,
+          });
+          console.log("🚀 ~ handlePayment ~ result:", result);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   return (
     <AppLayout>
-      <Flex justify="space-between">
-        <div className="left" style={{ width: "60%" }}>
+      <Flex justify="space-between" className="sm:flex-col">
+        <div className="left w-[60%] ">
           <CommonHeading text={"Check Out"} />
 
           <Flex vertical gap={25}>
@@ -152,6 +182,16 @@ const CheckoutPage = () => {
                     </div>
                   )}
                   <Divider />
+
+                  <Radio value="stripe">
+                    <Paragraph style={{ fontWeight: "bold", margin: 0 }}>
+                      Pay with Stripe
+                    </Paragraph>
+
+                    <Paragraph>We accept all major credit cards.</Paragraph>
+                  </Radio>
+
+                  <Divider />
                   <Radio value="cod">
                     <Paragraph style={{ fontWeight: "bold", margin: 0 }}>
                       Cash on delivery
@@ -162,17 +202,24 @@ const CheckoutPage = () => {
               </div>
             </Flex>
 
-            <Button
-              onClick={handlePayment}
-              loading={loading}
-              disabled={!instance || (paymentMethod === "card" && !instance)}
-              type="primary"
-            >
-              Place Order
-            </Button>
+            {paymentMethod !== "stripe" ? (
+              <Button
+                onClick={handlePayment}
+                loading={loading}
+                disabled={!instance || (paymentMethod === "card" && !instance)}
+                type="primary"
+              >
+                Place Order
+              </Button>
+            ) : (
+              <Button onClick={handlePayment} loading={loading} type="primary">
+                Place Now
+              </Button>
+            )}
           </Flex>
         </div>
-        <div className="right" style={{ width: "35%" }}>
+
+        <div className="right w-[35%] ">
           <CartSummary />
         </div>
       </Flex>

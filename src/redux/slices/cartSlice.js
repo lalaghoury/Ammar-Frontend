@@ -3,6 +3,7 @@ import axios from "axios";
 import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { wishlsitThunks } from "./wishlistSlice";
 
 const initialState = {
   data: {},
@@ -16,7 +17,7 @@ export const cartThunks = {
     "cart/addToCart",
     async (
       { productId, quantity = 1, price, color, size },
-      { rejectWithValue }
+      { rejectWithValue, dispatch, getState }
     ) => {
       try {
         const { data } = await axios.post(`${process.env.API_URL}/cart/add`, {
@@ -27,6 +28,10 @@ export const cartThunks = {
           size,
         });
         if (data.success) {
+          const wishlists = getState().wishlist.data;
+          if (wishlists.length > 0 && wishlists.includes(productId)) {
+            dispatch(wishlsitThunks.removeFromWishlist({ productId }));
+          }
           message.success(data.message);
           return data.cart;
         }
@@ -119,6 +124,33 @@ export const cartThunks = {
       try {
         const { data } = await axios.post(
           `${process.env.API_URL}/checkout/payment`,
+          {
+            nonce,
+            amount,
+            products,
+            shipping_address,
+            billing_address,
+          }
+        );
+        if (data.success) {
+          message.success(data.message);
+          navigate("/order-confirmed");
+        }
+      } catch (error) {
+        console.error("Error handling payment:", error.response.data.message);
+        return rejectWithValue(error.response.data.message);
+      }
+    }
+  ),
+  handleStripePayment: createAsyncThunk(
+    "cart/handleStripePayment",
+    async (
+      { nonce, amount, products, shipping_address, billing_address, navigate },
+      { rejectWithValue }
+    ) => {
+      try {
+        const { data } = await axios.post(
+          `${process.env.API_URL}/checkout/stripe`,
           {
             nonce,
             amount,
@@ -229,7 +261,7 @@ const cartSlice = createSlice({
       })
       .addCase(cartThunks.applyCoupon.fulfilled, (state, action) => {
         state.loading = false;
-        // state.data = action.payload;
+        state.data = action.payload;
       })
       .addCase(cartThunks.applyCoupon.rejected, (state, action) => {
         state.loading = false;
@@ -239,10 +271,8 @@ const cartSlice = createSlice({
       .addCase(cartThunks.handlePayment.pending, (state) => {
         state.loading = true;
       })
-      .addCase(cartThunks.handlePayment.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-        state.count = 0;
+      .addCase(cartThunks.handlePayment.fulfilled, (state) => {
+        Object.assign(state, initialState);
       })
       .addCase(cartThunks.handlePayment.rejected, (state, action) => {
         state.loading = false;

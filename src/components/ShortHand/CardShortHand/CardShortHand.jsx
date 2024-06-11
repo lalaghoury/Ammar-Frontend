@@ -33,12 +33,12 @@ const CardShortHand = ({ text, apiUrl, color, width, height, slice }) => {
   return (
     <AppLayout>
       <Spin spinning={loading} tip="Loading...">
-        <CommonHeading text={text} />
+        {text && <CommonHeading text={text} />}
         <Flex gap={10} wrap="wrap" justify="space-between" className="wrapper">
           {products.map((product) => (
             <div
               key={product?._id}
-              className={`card rounded-lg w-[282px] h-[460px] bg-white mb-[50px] relative cursor-pointer overflow-hidden p-3`}
+              className={`card rounded-lg w-[282px] h-[460px] bg-white mb-[50px] relative cursor-pointer overflow-hidden`}
             >
               <Image
                 className="hover:scale-110 ease-in-out duration-500 rounded-lg object-cover"

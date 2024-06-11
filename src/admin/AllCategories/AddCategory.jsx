@@ -13,22 +13,21 @@ const AddCategory = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    console.log("🚀 ~ onFinish ~ values:", values);
-    // setLoading(true);
-    // try {
-    //   const { data } = await axios.post(
-    //     `${process.env.API_URL}/categories/new`,
-    //     values
-    //   );
-    //   if (data.success) {
-    //     message.success(data.message);
-    //     navigate("/dashboard/categories/categories-list");
-    //   }
-    // } catch (error) {
-    //   console.log("Error in Adding Category", error.response.data.message);
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      const { data } = await axios.post(
+        `${process.env.API_URL}/categories/new`,
+        values
+      );
+      if (data.success) {
+        message.success(data.message);
+        navigate("/dashboard/categories/categories-list");
+      }
+    } catch (error) {
+      console.log("Error in Adding Category", error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {

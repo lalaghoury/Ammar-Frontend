@@ -38,6 +38,7 @@ import {
   ErrorPage,
   OrderDetails,
   CategoryDetails,
+  DressStyleDetails,
 } from "./comp";
 import axios from "axios";
 
@@ -99,6 +100,10 @@ function App() {
         {
           path: "/category/:categoryName",
           element: <CategoryDetails />,
+        },
+        {
+          path: "/dress-style/:DressStyleName",
+          element: <DressStyleDetails />,
         },
         {
           path: "/",

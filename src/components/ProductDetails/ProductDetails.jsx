@@ -17,6 +17,7 @@ import { cartThunks } from "../../redux/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Title from "antd/es/typography/Title";
 import CommonHeading from "../CommonHeading/CommonHeading";
+import { useWishlistEffect } from "../../redux/slices/wishlistSlice";
 
 const ProductDetails = () => {
   const [product, setProduct] = useState({});
@@ -28,6 +29,7 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  useWishlistEffect();
 
   const items = [
     {

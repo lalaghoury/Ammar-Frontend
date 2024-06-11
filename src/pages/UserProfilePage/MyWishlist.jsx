@@ -22,7 +22,7 @@ const MyWishlist = () => {
   };
 
   const handleRemoveFromWishlist = (productId) => {
-    dispatch(wishlsitThunks.removeFromWishlist({productId}));
+    dispatch(wishlsitThunks.removeFromWishlist({ productId }));
   };
 
   return (

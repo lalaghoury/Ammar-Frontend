@@ -29,6 +29,7 @@ import MyOrders from "./pages/UserProfilePage/MyOrders";
 import MyWishlist from "./pages/UserProfilePage/MyWishlist";
 import MyInfo from "./pages/UserProfilePage/MyInfo";
 import CategoryDetails from "./pages/CategoryDetails/CategoryDetails";
+import DressStyleDetails from "./pages/DressStyleDetails/DressStyleDetails.jsx";
 
 // Routes
 import PrivateRoute from "./Routes/Private";
@@ -82,5 +83,6 @@ export {
   AlreadyLoggedInRoute,
   MainLayout,
   ErrorPage,
-  OrderDetails, 
+  OrderDetails,
+  DressStyleDetails,
 };

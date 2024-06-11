@@ -336,6 +336,7 @@ const Shop = () => {
                 Reset all filters
               </Button>
             </div>
+            
             <div className="w-[1095px]">
               <CommonHeading text={"Shop"} className={"!mt-0"} />
               <div
