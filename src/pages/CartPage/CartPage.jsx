@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLayout from "../../config/AppLayout/AppLayout";
-import { Button, Divider, Flex, Image, Input, Spin, Table } from "antd";
+import { Button, Divider, Flex, Image, Spin, Table } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { cartThunks, useCartEffect } from "../../redux/slices/cartSlice";
 import Paragraph from "antd/es/typography/Paragraph";
 import emptyCart from "../../assets/images/emptyCart.png";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
 
 const CartPage = () => {
   useCartEffect();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.cart);
-  const [couponCode, setCouponCode] = useState("");
   const { data: cart, loading } = state;
 
   const handleUpdateQuantity = (productId, quantity, price) => {
@@ -24,9 +25,34 @@ const CartPage = () => {
     dispatch(cartThunks.deleteCartItem(itemId));
   };
 
-  const applyCoupon = async () => {
-    dispatch(cartThunks.applyCoupon(couponCode));
-    setCouponCode("");
+  const handlePayment = async () => {
+    try {
+      const stripe = await loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
+
+      const { data } = await axios.post(
+        `${process.env.API_URL}/checkout/stripe`,
+        {
+          products: cart?.items?.map((item) => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+            name: item.productId.name,
+            thumbnail: item.productId.thumbnail,
+            price: item.productId.price,
+            color: item.color,
+            size: item.size,
+          })),
+          amount: cart?.total,
+        }
+      );
+
+      if (data.success) {
+        stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (!cart.items)
@@ -140,41 +166,14 @@ const CartPage = () => {
           </div>
 
           <Flex
-            justify="space-between"
+            justify="flex-end"
             style={{
               width: "100%",
               background: "#F6F6F6",
             }}
-            className={`p-10 ${cart.couponApplied && "place-content-end"}`}
+            className={`p-10`}
           >
-            {!cart.couponApplied && (
-              <Flex vertical gap={30} style={{ width: "35%" }}>
-                <Flex vertical gap={10}>
-                  <Title level={3}>Discount Codes</Title>
-                  <p>Enter your coupon code if you have one.</p>
-                </Flex>
-                <Flex>
-                  <Input
-                    style={{
-                      padding: "0 0 0 10px",
-                      border: "1px solid #ccc",
-                      borderRadius: 5,
-                    }}
-                    suffix={
-                      <>
-                        <Button type="primary" onClick={() => applyCoupon()}>
-                          Apply Coupon
-                        </Button>
-                      </>
-                    }
-                    placeholder="Enter your coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                  />
-                </Flex>
-              </Flex>
-            )}
-            <PriceDetails useWidth={"33%"} />
+            <PriceDetails handlePayment={handlePayment} />
           </Flex>
         </div>
       ) : (
@@ -184,92 +183,37 @@ const CartPage = () => {
   );
 };
 
-export const PriceDetails = ({
-  useWidth = "100%",
-  useClassName = "",
-  showPlaceOrder = true,
-}) => {
+export const PriceDetails = ({ handlePayment }) => {
   const { data: cart } = useSelector((state) => state.cart);
-  const navigate = useNavigate();
-
-  const shipping = 0;
 
   return (
-    <div style={{ width: useWidth }}>
-      <Flex
-        justify="center"
-        vertical
-        align="flex-start"
-        className={useClassName}
-      >
+    <div className="p-10 w-1/3">
+      <Flex justify="center" vertical align="flex-start">
         <Flex align="center" justify="space-between" style={{ width: "100%" }}>
           <Flex align="center" gap={4}>
             <Title level={5} style={{ margin: 0 }}>
-              Price
+              Total
             </Title>
             <Paragraph style={{ margin: 0 }}>
-              ( {cart?.items?.length} items )
+              ( {cart?.items?.length}{" "}
+              {cart?.items?.length > 1 ? "items" : "item"} )
             </Paragraph>
           </Flex>
           <Title level={5} style={{ margin: 0 }}>
-            ${cart?.price}
+            ${cart?.total}
           </Title>
         </Flex>
+
         <Divider className="sm-divider" />
 
-        {cart?.savings !== 0 && (
-          <>
-            {" "}
-            <Flex
-              align="center"
-              justify="space-between"
-              style={{ width: "100%" }}
-            >
-              <Title level={5} style={{ margin: 0 }}>
-                Savings
-              </Title>
-              <Title level={5} style={{ margin: 0, marginBottom: 5 }}>
-                -${cart?.savings}
-              </Title>
-            </Flex>
-            <Divider className="sm-divider" />
-          </>
-        )}
-
-        <Flex align="center" justify="space-between" style={{ width: "100%" }}>
-          <Title level={5} style={{ margin: 0 }}>
-            Shipping
-          </Title>
-          <Title level={5} style={{ margin: 0 }}>
-            +${shipping}
-          </Title>
-        </Flex>
-        <Divider className="sm-divider" />
-
-        <Flex
-          align="center"
-          justify="space-between"
-          style={{ width: "100%", marginTop: 25 }}
+        <Button
+          style={{ marginTop: 16 }}
+          type="primary"
+          onClick={handlePayment}
+          block
         >
-          <Title level={5} style={{ margin: 0 }}>
-            Total
-          </Title>
-          <Title level={5} style={{ margin: 0 }}>
-            ${cart?.total + shipping}
-          </Title>
-        </Flex>
-        <Divider className="sm-divider" />
-
-        {showPlaceOrder && (
-          <Button
-            style={{ marginTop: 16 }}
-            type="primary"
-            onClick={() => navigate("/checkout")}
-            block
-          >
-            Proceed to Checkout
-          </Button>
-        )}
+          Proceed to Checkout
+        </Button>
       </Flex>
     </div>
   );

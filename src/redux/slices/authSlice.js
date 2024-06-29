@@ -11,7 +11,6 @@ const initialState = {
   loading: false,
   error: null,
   verified: false,
-  token: null,
 };
 
 export const useAuthActions = () => {
@@ -81,7 +80,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     signin: (state, action) => {
-      const { user } = action.payload;
+      const { user: data } = action.payload;
+      const user = {
+        avatar: data.avatar,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        provider: data.provider,
+        newsletter: data.newsletter,
+        _id: data._id,
+      };
       localStorage.setItem(
         "auth",
         JSON.stringify({

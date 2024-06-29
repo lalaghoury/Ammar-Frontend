@@ -20,17 +20,21 @@ import CommonHeading from "../CommonHeading/CommonHeading";
 import FooterUser from "../Footer/Footer";
 import queryString from "query-string";
 
+const MIN_PRICE_LIMIT = 10;
+const MIN_MAX_PRICE = 50;
+const DEFAULT_MAX_PRICE = 1000;
+
 const Shop = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  //Innitial states for categories & dress styles
+  // Initial states for categories & dress styles
   const [categoriesNames, setCategoriesNames] = useState([]);
   const [dressStyleNames, setDressStyleNames] = useState([]);
 
   // Initial states for filters
-  const [minPrice, setMinPrice] = useState(null);
-  const [maxPrice, setMaxPrice] = useState(null);
+  const [minPrice, setMinPrice] = useState(MIN_PRICE_LIMIT);
+  const [maxPrice, setMaxPrice] = useState(DEFAULT_MAX_PRICE);
   const [category, setCategory] = useState("");
   const [dressStyle, setDressStyle] = useState("");
   const [colors, setColors] = useState([]);
@@ -40,35 +44,33 @@ const Shop = () => {
   const [filtersInitialized, setFiltersInitialized] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInitialData = async () => {
       try {
-        const categoriesResponse = await axios.get(
-          `${process.env.API_URL}/categories/names`
-        );
-        const dressStylesResponse = await axios.get(
-          `${process.env.API_URL}/dress-styles/names`
-        );
+        const [categoriesResponse, dressStylesResponse] = await Promise.all([
+          axios.get(`${process.env.API_URL}/categories/names`),
+          axios.get(`${process.env.API_URL}/dress-styles/names`),
+        ]);
 
         setCategoriesNames(categoriesResponse.data.categoriesNames);
         setDressStyleNames(dressStylesResponse.data.DressStylesNames);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching initial data:", error);
       }
     };
-    fetchData();
+    fetchInitialData();
   }, []);
 
-  // Function to get ID from name
   const getIdFromName = (name, list) => {
     const item = list.find((item) => item.name === name);
     return item ? item.id : "";
   };
 
-  // Function to parse and set filter state from URL
   const setFiltersFromURL = () => {
     const parsed = queryString.parse(location.search);
-    if (parsed.minPrice) setMinPrice(Number(parsed.minPrice));
-    if (parsed.maxPrice) setMaxPrice(Number(parsed.maxPrice));
+    if (parsed.minPrice)
+      setMinPrice(Math.max(Number(parsed.minPrice), MIN_PRICE_LIMIT));
+    if (parsed.maxPrice)
+      setMaxPrice(Math.max(Number(parsed.maxPrice), MIN_MAX_PRICE));
     if (parsed.category)
       setCategory(getIdFromName(parsed.category, categoriesNames));
     if (parsed.dressStyle)
@@ -78,7 +80,6 @@ const Shop = () => {
     setFiltersInitialized(true);
   };
 
-  // Parse filters from URL query parameters on component mount
   useEffect(() => {
     if (categoriesNames.length > 0 && dressStyleNames.length > 0) {
       setFiltersFromURL();
@@ -87,7 +88,7 @@ const Shop = () => {
 
   useEffect(() => {
     if (filtersInitialized) {
-      const fetchData = async () => {
+      const fetchFilteredProducts = async () => {
         try {
           setLoading(true);
           const { data } = await axios.get(
@@ -118,7 +119,7 @@ const Shop = () => {
         }
       };
 
-      fetchData();
+      fetchFilteredProducts();
     }
   }, [
     filtersInitialized,
@@ -130,11 +131,10 @@ const Shop = () => {
     sizes,
   ]);
 
-  // Generalized handleChange function
   const handleChange = (filterName, value) => {
     const filterStateUpdaters = {
-      minPrice: setMinPrice,
-      maxPrice: setMaxPrice,
+      minPrice: (val) => setMinPrice(Math.max(val, MIN_PRICE_LIMIT)),
+      maxPrice: (val) => setMaxPrice(Math.max(val, MIN_MAX_PRICE)),
       category: setCategory,
       dressStyle: setDressStyle,
       colors: setColors,
@@ -153,7 +153,6 @@ const Shop = () => {
       [filterName]: value,
     };
 
-    // Filter out null or empty values
     const validFilters = Object.fromEntries(
       Object.entries(currentFilters).filter(
         ([key, val]) => val != null && val !== ""
@@ -169,8 +168,8 @@ const Shop = () => {
     handleChange("dressStyle", "");
     handleChange("colors", []);
     handleChange("sizes", []);
-    handleChange("minPrice", 0);
-    handleChange("maxPrice", 1000);
+    handleChange("minPrice", MIN_PRICE_LIMIT);
+    handleChange("maxPrice", DEFAULT_MAX_PRICE);
   };
 
   const items = [
@@ -183,20 +182,19 @@ const Shop = () => {
       ),
       children: (
         <div>
-          {categoriesNames?.map((categoryObj) => (
+          {categoriesNames.map((categoryObj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
               onClick={() => handleChange("category", categoryObj._id)}
               key={categoryObj._id}
             >
-              {categoryObj?.name}
+              {categoryObj.name}
             </p>
           ))}
           <Divider className="h-px opacity-[0.4] bg-[#bebcbd] !mb-0" />
         </div>
       ),
     },
-
     {
       key: "2",
       label: (
@@ -206,11 +204,11 @@ const Shop = () => {
         <div>
           <Slider
             range
-            min={0}
-            max={1000}
+            min={MIN_PRICE_LIMIT}
+            max={DEFAULT_MAX_PRICE}
             value={[minPrice, maxPrice]}
             onChange={(val) => {
-              handleChange("minPrice", val[0]);
+              handleChange("minPrice", Math.max(val[0], MIN_PRICE_LIMIT));
               handleChange("maxPrice", val[1]);
             }}
             className="mb-5 text-[#8A33FD]"
@@ -219,22 +217,24 @@ const Shop = () => {
             <Flex align="center" gap={5} vertical>
               <Input
                 value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
+                onChange={(e) =>
+                  setMinPrice(Math.max(Number(e.target.value), MIN_PRICE_LIMIT))
+                }
                 placeholder="min price"
                 type="number"
-                min={minPrice}
-                max={1000}
+                min={MIN_PRICE_LIMIT}
+                max={DEFAULT_MAX_PRICE}
                 step="10"
               />
             </Flex>
             <Flex align="center" gap={5} vertical>
               <Input
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
                 placeholder="max price"
                 type="number"
-                min={minPrice}
-                max={1000}
+                min={MIN_PRICE_LIMIT}
+                max={DEFAULT_MAX_PRICE}
                 step="10"
               />
             </Flex>
@@ -253,7 +253,6 @@ const Shop = () => {
       ),
       children: <Colors colors={colors} handleChange={handleChange} />,
     },
-
     {
       key: "4",
       label: (
@@ -261,7 +260,6 @@ const Shop = () => {
       ),
       children: <Sizes sizes={sizes} handleChange={handleChange} />,
     },
-
     {
       key: "5",
       label: (
@@ -271,13 +269,13 @@ const Shop = () => {
       ),
       children: (
         <div>
-          {dressStyleNames?.map((Obj) => (
+          {dressStyleNames.map((Obj) => (
             <p
               className="cursor-pointer pb-2 text-[#444]  font-semibold leading-[normal]"
-              onClick={() => handleChange("dressStyle", Obj?._id)}
-              key={Obj?._id}
+              onClick={() => handleChange("dressStyle", Obj._id)}
+              key={Obj._id}
             >
-              {Obj?.name}
+              {Obj.name}
             </p>
           ))}
           <Divider className="h-px opacity-[0.4] bg-[#bebcbd] !mb-0" />
@@ -336,7 +334,7 @@ const Shop = () => {
                 Reset all filters
               </Button>
             </div>
-            
+
             <div className="w-[1095px]">
               <CommonHeading text={"Shop"} className={"!mt-0"} />
               <div

@@ -1,12 +1,13 @@
 import { Image, message } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Steps } from "antd";
 
 const OrderDetails = () => {
   const [order, setOrder] = useState({});
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -48,6 +49,8 @@ const OrderDetails = () => {
           height="20"
           viewBox="0 0 20 20"
           fill="none"
+          onClick={() => navigate(-1)}
+          className="cursor-pointer"
         >
           <path
             d="M11.6665 5L7.2558 9.41074C6.93036 9.73618 6.93036 10.2638 7.2558 10.5893L11.6665 15"
@@ -152,7 +155,7 @@ const ProductItem = ({ product }) => {
             Qty : {product?.quantity}
           </div>
           <div className="_29_00 text-[#807d7e] font-['Causten'] text-[1.375rem] font-bold leading-[normal]">
-            $29.00
+            {product?.productId?.price}
           </div>
           <svg
             width={22}

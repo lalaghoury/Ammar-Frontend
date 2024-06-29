@@ -280,7 +280,7 @@ export const Hamburger = () => {
   };
 
   return (
-    <div className="hamburger">
+    <div className="hamburger z-[999999]">
       {isDropdownOpen ? (
         <>
           <div className="nav-dropdown">

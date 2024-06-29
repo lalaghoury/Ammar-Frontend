@@ -22,17 +22,15 @@ const SignUpPage = () => {
   }
 
   const onFinish = async (values) => {
-    if (!values.email || !values.password || !values.name) {
+    if (!values.email || !values.phone || !values.password || !values.name) {
       return message.error("All fields are required");
     }
     try {
       setIsSubmitting(true);
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${process.env.API_URL}/auth/signup`,
         values
       );
-      const data = response.data;
-      console.log(data);
       if (data.success) {
         message.success(data.message, 1, () => {
           navigate("/sign-in");
@@ -44,6 +42,7 @@ const SignUpPage = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <AppLayout>
       <div className="signup-page">
@@ -99,6 +98,38 @@ const SignUpPage = () => {
                   validateTrigger="onBlur"
                 >
                   <Input size="large" placeholder="John Doe" />
+                </Form.Item>
+
+                {/* Phone */}
+                <Form.Item
+                  name="phone"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Phone is required!",
+                    },
+                    {
+                      validator: (_, value) => {
+                        if (
+                          !value ||
+                          /^\+?\d{1,3}\s?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(
+                            value
+                          )
+                        ) {
+                          return Promise.resolve();
+                        } else if (!/^\d{10,15}$/.test(value)) {
+                          return Promise.reject(
+                            "Phone number must have between 10 and 15 digits"
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                  validateTrigger="onBlur"
+                >
+                  <Input size="large" placeholder="1234567890" />
                 </Form.Item>
 
                 {/* Email */}

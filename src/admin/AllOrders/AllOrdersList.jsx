@@ -134,8 +134,16 @@ const AllOrdresList = () => {
       dataIndex: "payment",
       render: (payment) => (
         <Flex gap={5} className="items-center">
-          <Image src={payment.image} alt={payment.name} preview={false} />
-          <p>{payment.name}</p>
+          <Image
+            src={payment?.image}
+            alt={payment?.name}
+            preview={false}
+            width={50}
+            height={30}
+            fallback="https://via.placeholder.com/50x30"
+            className="rounded object-contain"
+          />
+          <p>{payment?.name?.toLocaleUpperCase()}</p>
         </Flex>
       ),
     },
@@ -228,12 +236,36 @@ const AllOrdresList = () => {
                 {
                   key: 2,
                   label: <strong>Shipping Address</strong>,
-                  value: `${record?.fullOrder?.shipping_address?.address_line_1} ${record?.fullOrder?.shipping_address?.address_line_2} ${record?.fullOrder?.shipping_address?.appartment} ${record?.fullOrder?.shipping_address?.city} ${record?.fullOrder?.shipping_address?.state} ${record?.fullOrder?.shipping_address?.country} ${record?.fullOrder?.shipping_address?.pincode} ${record?.fullOrder?.shipping_address?.phone}`,
+                  value: `${
+                    record?.fullOrder?.shipping_address?.address_line_1
+                  } ${
+                    record?.fullOrder?.shipping_address?.address_line_2
+                      ? record?.fullOrder?.shipping_address?.address_line_2
+                      : ""
+                  } ${record?.fullOrder?.shipping_address?.city} ${
+                    record?.fullOrder?.shipping_address?.state
+                      ? record?.fullOrder?.shipping_address?.state
+                      : ""
+                  } ${record?.fullOrder?.shipping_address?.country} ${
+                    record?.fullOrder?.shipping_address?.pincode
+                  } ${record?.fullOrder?.shipping_address?.phone}`,
                 },
                 {
                   key: 3,
                   label: <strong>Billing Address</strong>,
-                  value: `${record?.fullOrder?.billing_address?.address_line_1} ${record?.fullOrder?.billing_address?.address_line_2} ${record?.fullOrder?.billing_address?.appartment} ${record?.fullOrder?.billing_address?.city} ${record?.fullOrder?.billing_address?.state} ${record?.fullOrder?.billing_address?.country} ${record?.fullOrder?.billing_address?.pincode} ${record?.fullOrder?.billing_address?.phone}`,
+                  value: `${
+                    record?.fullOrder?.billing_address?.address_line_1
+                  } ${
+                    record?.fullOrder?.billing_address?.address_line_2
+                      ? record?.fullOrder?.billing_address?.address_line_2
+                      : ""
+                  } ${record?.fullOrder?.billing_address?.city} ${
+                    record?.fullOrder?.billing_address?.state
+                      ? record?.fullOrder?.billing_address?.state
+                      : ""
+                  } ${record?.fullOrder?.billing_address?.country} ${
+                    record?.fullOrder?.billing_address?.pincode
+                  } ${record?.fullOrder?.billing_address?.phone}`,
                 },
                 {
                   key: 4,
@@ -285,6 +317,9 @@ const AllOrdresList = () => {
                         src={record?.payment?.image}
                         alt={record?.payment?.name}
                         preview={false}
+                        width={50}
+                        height={40}
+                        className="rounded-lg object-contain"
                       />
                       <p>{record?.payment?.name}</p>
                     </Flex>

@@ -38,6 +38,7 @@ export const userThunks = {
         );
         if (data.success) {
           dispatch(signinAction({ user: data.user }));
+          message.success(data.message);
           return data.user;
         }
       } catch (error) {

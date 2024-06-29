@@ -94,82 +94,6 @@ export const cartThunks = {
       }
     }
   ),
-  applyCoupon: createAsyncThunk(
-    "cart/applyCoupon",
-    async (couponCode, { dispatch, rejectWithValue }) => {
-      try {
-        const { data } = await axios.post(
-          `${process.env.API_URL}/coupon/apply-coupon`,
-          {
-            couponCode,
-          }
-        );
-        if (data.success) {
-          message.success(data.message);
-          dispatch(cartThunks.fetchCartItems());
-          return data.cart;
-        }
-      } catch (error) {
-        console.error("Error applying coupon:", error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      }
-    }
-  ),
-  handlePayment: createAsyncThunk(
-    "cart/handlePayment",
-    async (
-      { nonce, amount, products, shipping_address, billing_address, navigate },
-      { rejectWithValue }
-    ) => {
-      try {
-        const { data } = await axios.post(
-          `${process.env.API_URL}/checkout/payment`,
-          {
-            nonce,
-            amount,
-            products,
-            shipping_address,
-            billing_address,
-          }
-        );
-        if (data.success) {
-          message.success(data.message);
-          navigate("/order-confirmed");
-        }
-      } catch (error) {
-        console.error("Error handling payment:", error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      }
-    }
-  ),
-  handleStripePayment: createAsyncThunk(
-    "cart/handleStripePayment",
-    async (
-      { nonce, amount, products, shipping_address, billing_address, navigate },
-      { rejectWithValue }
-    ) => {
-      try {
-        const { data } = await axios.post(
-          `${process.env.API_URL}/checkout/stripe`,
-          {
-            nonce,
-            amount,
-            products,
-            shipping_address,
-            billing_address,
-          }
-        );
-        if (data.success) {
-          message.success(data.message);
-          navigate("/order-confirmed");
-          return data.cart;
-        }
-      } catch (error) {
-        console.error("Error handling payment:", error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      }
-    }
-  ),
   getCount: createAsyncThunk(
     "cart/getCount",
     async (_, { rejectWithValue }) => {
@@ -252,29 +176,6 @@ const cartSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(cartThunks.updateQuantity.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        message.error(action.payload);
-      })
-      .addCase(cartThunks.applyCoupon.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(cartThunks.applyCoupon.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-      })
-      .addCase(cartThunks.applyCoupon.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        message.error(action.payload);
-      })
-      .addCase(cartThunks.handlePayment.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(cartThunks.handlePayment.fulfilled, (state) => {
-        Object.assign(state, initialState);
-      })
-      .addCase(cartThunks.handlePayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         message.error(action.payload);

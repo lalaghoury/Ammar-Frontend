@@ -24,7 +24,6 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import NewPasswordPage from "./pages/NewPasswordPage/NewPasswordPage";
 import PageNotFound from "./pages/PageNotFound/PageNotFound";
 import CartPage from "./pages/CartPage/CartPage";
-import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import MyOrders from "./pages/UserProfilePage/MyOrders";
 import MyWishlist from "./pages/UserProfilePage/MyWishlist";
 import MyInfo from "./pages/UserProfilePage/MyInfo";
@@ -69,7 +68,6 @@ export {
   ProductDetails,
   CartPage,
   PrivateRoute,
-  CheckoutPage,
   OrderConfirmed,
   UserProfileLayout,
   MyOrders,

@@ -59,7 +59,7 @@ const MyOrders = () => {
                         <Typography.Text className="m-0 px-1">
                           {order.status}
                         </Typography.Text>
-                        <p>Payment Method : {order?.payment?.cardType} </p>
+                        <p>Payment Method : {order?.payment?.cardType?.toUpperCase()} </p>
                       </div>
                     </Flex>
                   </div>
