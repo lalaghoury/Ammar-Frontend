@@ -1,21 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import { Button, Divider, Flex, Image, Spin, Table } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { cartThunks, useCartEffect } from "../../redux/slices/cartSlice";
 import Paragraph from "antd/es/typography/Paragraph";
 import emptyCart from "../../assets/images/emptyCart.png";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
+import queryString from "query-string";
 
 const CartPage = () => {
   useCartEffect();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.cart);
   const { data: cart, loading } = state;
+  const { search } = useLocation();
+  const queryParams = queryString.parse(search);
+  const orderCancelled = queryParams?.order_cancelled;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleCalcelledCheckout = async () => {
+      await axios.post(`${process.env.API_URL}/checkout/stripe/cancel`);
+    };
+
+    if (orderCancelled) handleCalcelledCheckout();
+
+    const newSearch = search.replace(/order_cancelled=true&?/, "");
+    navigate({ search: newSearch });
+  }, []);
 
   const handleUpdateQuantity = (productId, quantity, price) => {
     dispatch(cartThunks.updateQuantity({ productId, quantity, price }));

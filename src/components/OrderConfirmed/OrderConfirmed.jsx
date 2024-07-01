@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./OrderConfirmed.scss";
 import vector from "../../assets/images/vector.svg";
 import vector1 from "../../assets/images/vector-1.svg";
@@ -40,9 +40,23 @@ import vector35 from "../../assets/images/vector-35.svg";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderConfirmed = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleConfirmedOrder = async () => {
+      try {
+        await axios.post(`${process.env.API_URL}/checkout/stripe/confirmed`);
+      } catch (err) {
+        console.error("Error confirming order:", err.message);
+      }
+    };
+
+    handleConfirmedOrder();
+  }, []);
+
   const handleClick = () => {
     navigate(`/shop`);
   };
