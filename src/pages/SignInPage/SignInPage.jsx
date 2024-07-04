@@ -17,13 +17,24 @@ const SignInPage = () => {
   const error = urlParams.get("error");
 
   useEffect(() => {
-    if (error) {
-      message.error(error);
-      const url = new URL(window.location.href);
-      url.searchParams.delete("error");
-      window.history.pushState({}, "", url);
-    }
-  }, []);
+    const handleErrorMessage = () => {
+      if (error) {
+        message.error(error);
+        const url = new URL(window.location.href);
+        url.searchParams.delete("error");
+        window.history.pushState({}, "", url);
+      }
+    };
+
+    handleErrorMessage();
+
+    const timer = setTimeout(() => {
+      handleErrorMessage();
+      clearTimeout(timer);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [error]);
 
   function discordSignIn() {
     window.location.href = `${process.env.API_URL}/auth/discord`;
