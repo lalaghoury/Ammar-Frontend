@@ -76,7 +76,7 @@ const UserProfileLayout = () => {
           <Divider />
         </Header>
         <Layout>
-          <Sider width="25%" style={siderStyle}>
+          <Sider style={siderStyle} className="lg:!w-[25%] !w-[10%]">
             <CommonHeading text={`Hello ${auth?.user?.name.split(" ")[0]}`} />
             <Paragraph className="m-0">Welcome to your Account</Paragraph>
             <Flex className="mt-30" vertical gap={20}>
@@ -85,18 +85,16 @@ const UserProfileLayout = () => {
                   <div
                     className="w-[2px] h-11 "
                     style={{
-                      borderLeft: word
-                        ?.split(" ")[1]
-                        ?.toLowerCase()
-                        .includes("orders") || word?.split(" ")[1]?.toLowerCase() === "details"
-                        ? "2px solid #3C4242"
-                        : "",
-                      background: word
-                        ?.split(" ")[1]
-                        ?.toLowerCase()
-                        .includes("orders") || word?.split(" ")[1]?.toLowerCase() === "details"
-                        ? "#3C4242"
-                        : "",
+                      borderLeft:
+                        word?.split(" ")[1]?.toLowerCase().includes("orders") ||
+                        word?.split(" ")[1]?.toLowerCase() === "details"
+                          ? "2px solid #3C4242"
+                          : "",
+                      background:
+                        word?.split(" ")[1]?.toLowerCase().includes("orders") ||
+                        word?.split(" ")[1]?.toLowerCase() === "details"
+                          ? "#3C4242"
+                          : "",
                     }}
                   />
                   <svg
@@ -179,7 +177,7 @@ const UserProfileLayout = () => {
               </span>
             </Flex>
           </Sider>
-          <Content style={contentStyle} className="px-5">
+          <Content style={contentStyle} className="lg:px-5 px-2">
             <Outlet />
           </Content>
         </Layout>

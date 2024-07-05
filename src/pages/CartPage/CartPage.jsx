@@ -21,6 +21,7 @@ const CartPage = () => {
   const queryParams = queryString.parse(search);
   const orderCancelled = queryParams?.order_cancelled;
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const handleCalcelledCheckout = async () => {
@@ -43,6 +44,7 @@ const CartPage = () => {
 
   const handlePayment = async () => {
     try {
+      setIsSubmitting(true);
       const stripe = await loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
 
       const { data } = await axios.post(
@@ -68,6 +70,8 @@ const CartPage = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -96,7 +100,7 @@ const CartPage = () => {
                   title: "Product Details",
                   dataIndex: "productId",
                   key: "details",
-                  render: (productId) => (
+                  render: (productId, record) => (
                     <div className="flex gap-3 items-center justify-between w-full">
                       <span style={{ width: 90 }}>
                         <Image
@@ -108,9 +112,21 @@ const CartPage = () => {
                           fallback="https://via.placeholder.com/90x90"
                         />
                       </span>
-                      <span style={{ flex: 1 }}>
-                        <Title level={5}>{productId?.name}</Title>
-                      </span>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <h5 className="font-['core Sans C'] font-bold">
+                          {productId?.name}
+                        </h5>
+                        <div>
+                          <p>
+                            <em>Color: </em>
+                            {record?.color}
+                          </p>
+                          <p>
+                            <em>Size: </em>
+                            {record?.size}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ),
                 },
@@ -118,7 +134,7 @@ const CartPage = () => {
                   title: "Price",
                   dataIndex: "productId",
                   key: "price",
-                  render: (productId) => productId?.price,
+                  render: (productId) => <strong>${productId?.price}</strong>,
                 },
                 {
                   title: "Quantity",
@@ -156,13 +172,6 @@ const CartPage = () => {
                   ),
                 },
                 {
-                  title: "Shipping",
-                  dataIndex: "productId",
-                  key: "shipping",
-                  render: (productId) =>
-                    productId.shipping === 0 ? "Free" : productId.shipping,
-                },
-                {
                   title: "Remove",
                   dataIndex: "productId",
                   key: "remove",
@@ -187,9 +196,12 @@ const CartPage = () => {
               width: "100%",
               background: "#F6F6F6",
             }}
-            className={`p-10`}
+            className={`mt-5 rounded-lg`}
           >
-            <PriceDetails handlePayment={handlePayment} />
+            <PriceDetails
+              handlePayment={handlePayment}
+              isSubmitting={isSubmitting}
+            />
           </Flex>
         </div>
       ) : (
@@ -199,38 +211,39 @@ const CartPage = () => {
   );
 };
 
-export const PriceDetails = ({ handlePayment }) => {
+export const PriceDetails = ({ handlePayment, isSubmitting }) => {
   const { data: cart } = useSelector((state) => state.cart);
 
   return (
-    <div className="p-10 w-1/3">
-      <Flex justify="center" vertical align="flex-start">
-        <Flex align="center" justify="space-between" style={{ width: "100%" }}>
-          <Flex align="center" gap={4}>
-            <Title level={5} style={{ margin: 0 }}>
-              Total
-            </Title>
-            <Paragraph style={{ margin: 0 }}>
-              ( {cart?.items?.length}{" "}
-              {cart?.items?.length > 1 ? "items" : "item"} )
-            </Paragraph>
-          </Flex>
-          <Title level={5} style={{ margin: 0 }}>
-            ${cart?.total}
+    <div className="p-5 lg:w-1/3 md:w-1/2 w-full flex justify-center flex-col items-start">
+      <Flex
+        align="center"
+        justify="space-between"
+        className="w-full items-center"
+      >
+        <Flex className="items-center gap-1">
+          <Title className="text-sm" level={5}>
+            Total
           </Title>
+          <Paragraph className="text-sm">
+            ({cart?.items?.length} {cart?.items?.length > 1 ? "items" : "item"})
+          </Paragraph>
         </Flex>
-
-        <Divider className="sm-divider" />
-
-        <Button
-          style={{ marginTop: 16 }}
-          type="primary"
-          onClick={handlePayment}
-          block
-        >
-          Proceed to Checkout
-        </Button>
+        <Title className="text-sm" level={5}>
+          ${cart?.total}
+        </Title>
       </Flex>
+
+      <Button
+        style={{ marginTop: 16 }}
+        type="primary"
+        onClick={handlePayment}
+        className="p-5 w-full dis-fcc min-w-[200px]"
+        block
+        loading={isSubmitting}
+      >
+        Proceed to Checkout
+      </Button>
     </div>
   );
 };
