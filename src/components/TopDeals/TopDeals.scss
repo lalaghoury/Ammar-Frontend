@@ -1,3 +1,104 @@
-.deals-heading{
-    
+.top-deals-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 22.3125rem;
+  border: 1.069px solid #323232;
+  border-radius: 1rem;
+  background-color: #3c4242;
+  padding: 1rem;
+
+  .deals-heading {
+    color: white;
+    font-family: "Sans C";
+    font-size: 3.125rem;
+    font-weight: 800;
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .deals-subheading {
+    color: white;
+    font-family: "Causten";
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    text-align: center;
+
+    .highlight {
+      color: #fbd103;
+    }
+  }
+
+  .brands-container {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .brand-card {
+    flex-shrink: 0;
+    width: 11.0625rem;
+    height: 5.3125rem;
+    border-radius: 1rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-deals-container {
+    height: auto;
+    padding: 2rem;
+
+    .deals-heading {
+      font-size: 2rem;
+    }
+
+    .deals-subheading {
+      font-size: 1rem;
+    }
+
+    .brands-container {
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .brand-card {
+      width: 8rem;
+      height: 4rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .top-deals-container {
+    .deals-heading {
+      font-size: 1.5rem;
+    }
+
+    .deals-subheading {
+      font-size: 0.875rem;
+    }
+
+    .brands-container {
+      gap: 0.5rem;
+    }
+
+    .brand-card {
+      width: 6rem;
+      height: 3rem;
+    }
+  }
 }
