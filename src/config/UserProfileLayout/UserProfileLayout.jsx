@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import CommonHeading from "../../components/CommonHeading/CommonHeading";
-import { Layout, Breadcrumb, Divider, Flex, message } from "antd";
+import { Layout, Breadcrumb, Divider, Flex } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Paragraph from "antd/es/typography/Paragraph";
 import { HeartOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";

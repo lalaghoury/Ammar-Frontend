@@ -1,16 +1,34 @@
-import React from "react";
+import { useState } from "react";
 import "./SignUpPage.scss";
 import AppLayout from "../../config/AppLayout/AppLayout";
 import GoogleSvg from "../../assets/images/Google.svg";
-// import TwitterSvg from "../../assets/images/twitter.svg";
 import SignUpImage from "../../assets/images/signin.png";
-import { Button, Checkbox, Form, Input, Space, message } from "antd";
+import { Button, Checkbox, Form, Input, Space, Select, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DiscordOutlined, LoadingOutlined } from "@ant-design/icons";
 
+const roles = [
+  { value: "Startup", label: "Startup" },
+  { value: "Sponsor", label: "Sponsor" },
+];
+
+const subRoles = {
+  Startup: [
+    { value: "employee", label: "Employee" },
+    { value: "manager", label: "Manager" },
+    // add more options here as needed
+  ],
+  Sponsor: [
+    { value: "investor", label: "Investor" },
+    { value: "advisor", label: "Advisor" },
+    // add more options here as needed
+  ],
+};
+
 const SignUpPage = () => {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subRoleOptions, setSubRoleOptions] = useState([]);
   const navigate = useNavigate();
 
   function discordSignIn() {
@@ -21,8 +39,19 @@ const SignUpPage = () => {
     window.location.href = `${process.env.API_URL}/auth/google`;
   }
 
+  const handleRoleChange = (role) => {
+    setSubRoleOptions(subRoles[role] || []);
+  };
+
   const onFinish = async (values) => {
-    if (!values.email || !values.phone || !values.password || !values.name) {
+    if (
+      !values.email ||
+      !values.phone ||
+      !values.password ||
+      !values.name ||
+      !values.role ||
+      !values.sub_role
+    ) {
       return message.error("All fields are required");
     }
     try {
@@ -54,7 +83,7 @@ const SignUpPage = () => {
             <div className="signup-text">
               <h1 className="mt-20">Sign Up</h1>
               <p className="mb-20">
-                Sign up for free to access to in any of our products{" "}
+                Sign up for free to access any of our products
               </p>
               <div className="signup-btns">
                 <Button className="signup-btn" block onClick={googleSignIn}>
@@ -65,16 +94,15 @@ const SignUpPage = () => {
                     className="mr-3"
                   />
                   <span>Continue With Google</span>
-                </Button>{" "}
+                </Button>
                 <Button className="signup-btn" block onClick={discordSignIn}>
-                  {/* <img src={TwitterSvg} alt="facebook img" /> */}
                   <DiscordOutlined
                     style={{ fontSize: "2rem", color: "#7289DA" }}
                   />
                   <span style={{ verticalAlign: "middle" }}>
                     Continue With Discord
                   </span>
-                </Button>{" "}
+                </Button>
               </div>
             </div>
 
@@ -83,9 +111,8 @@ const SignUpPage = () => {
                 layout="vertical"
                 onFinish={onFinish}
                 className="signup-form"
-                scrollToFirstError={true}
+                scrollToFirstError
               >
-                {/* Name */}
                 <Form.Item
                   name="name"
                   label="Name"
@@ -100,7 +127,6 @@ const SignUpPage = () => {
                   <Input size="large" placeholder="John Doe" />
                 </Form.Item>
 
-                {/* Phone */}
                 <Form.Item
                   name="phone"
                   label="Phone Number"
@@ -109,30 +135,12 @@ const SignUpPage = () => {
                       required: true,
                       message: "Phone is required!",
                     },
-                    {
-                      validator: (_, value) => {
-                        if (
-                          !value ||
-                          /^\+?\d{1,3}\s?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(
-                            value
-                          )
-                        ) {
-                          return Promise.resolve();
-                        } else if (!/^\d{10,15}$/.test(value)) {
-                          return Promise.reject(
-                            "Phone number must have between 10 and 15 digits"
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
                   ]}
                   validateTrigger="onBlur"
                 >
                   <Input size="large" placeholder="1234567890" />
                 </Form.Item>
 
-                {/* Email */}
                 <Form.Item
                   name="email"
                   label="Email Address"
@@ -147,7 +155,44 @@ const SignUpPage = () => {
                   <Input size="large" placeholder="designer@gmail.com" />
                 </Form.Item>
 
-                {/* Password */}
+                <Form.Item
+                  name="role"
+                  label="Role"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Role is required!",
+                    },
+                  ]}
+                  validateTrigger="onBlur"
+                >
+                  <Select
+                    size="large"
+                    placeholder="Select a role"
+                    onChange={handleRoleChange}
+                    options={roles}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="sub_role"
+                  label="Sub Role"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Sub Role is required!",
+                    },
+                  ]}
+                  validateTrigger="onBlur"
+                >
+                  <Select
+                    size="large"
+                    placeholder="Select a sub role"
+                    options={subRoleOptions}
+                    disabled={!subRoleOptions.length}
+                  />
+                </Form.Item>
+
                 <Form.Item
                   name="password"
                   label="Password"
@@ -156,49 +201,12 @@ const SignUpPage = () => {
                       required: true,
                       message: "Password is required!",
                     },
-                    {
-                      validator: (_, value) => {
-                        if (!value || value.length < 8) {
-                          return Promise.reject(
-                            "Password must have 8 characters or more"
-                          );
-                        }
-                        if (!/[A-Z]/.test(value)) {
-                          return Promise.reject(
-                            "Password must have at least one uppercase letter"
-                          );
-                        }
-                        if (!/[a-z]/.test(value)) {
-                          return Promise.reject(
-                            "Password must have at least one lowercase letter"
-                          );
-                        }
-                        if (!/[0-9]/.test(value)) {
-                          return Promise.reject(
-                            "Password must have at least one number"
-                          );
-                        }
-                        if (!/[^a-zA-Z0-9]/.test(value)) {
-                          return Promise.reject(
-                            "Password must have at least one symbol"
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
                   ]}
                   validateTrigger="onBlur"
                 >
-                  <div>
-                    <Input.Password size="large" />
-                    <span>
-                      Use 8 or more characters with a mix of letters, numbers &
-                      symbols
-                    </span>
-                  </div>
+                  <Input.Password size="large" />
                 </Form.Item>
 
-                {/* Agreement */}
                 <Form.Item
                   name="agreement"
                   valuePropName="checked"
@@ -222,14 +230,12 @@ const SignUpPage = () => {
                   </Checkbox>
                 </Form.Item>
 
-                {/* Newsletter */}
                 <Form.Item name="newsletter" valuePropName="checked">
                   <Checkbox defaultChecked>
                     Subscribe to our monthly newsletter
                   </Checkbox>
                 </Form.Item>
 
-                {/* Submit Button */}
                 <Form.Item>
                   <Button
                     type="primary"
@@ -248,7 +254,7 @@ const SignUpPage = () => {
                     Already have an account?{" "}
                     <Link className="link text-sec" to={"/sign-in"}>
                       Log In
-                    </Link>{" "}
+                    </Link>
                   </div>
                 </Form.Item>
               </Form>

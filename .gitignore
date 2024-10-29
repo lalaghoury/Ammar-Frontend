@@ -24,5 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 .env
-src/Test.jsx
-package-lock.json
+

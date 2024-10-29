@@ -1,4 +1,3 @@
-import React from "react";
 import "./Footer.scss";
 import { Link } from "react-router-dom";
 import { Divider, Space } from "antd";
@@ -29,7 +28,7 @@ const FooterUser = () => {
           <h1>Need Help</h1>
           <Link>Track Order</Link>
           <Link>Returns & Refunds</Link>
-          <Link>FAQ's</Link>
+          <Link>FAQ&apos;s</Link>
           <Link>Career</Link>
         </div>
         {/* Footer Stage 1 Part 2 */}
