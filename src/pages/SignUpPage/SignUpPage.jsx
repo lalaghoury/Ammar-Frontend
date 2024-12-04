@@ -10,7 +10,7 @@ import { DiscordOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const roles = [
   { value: "Startup", label: "Startup" },
-  { value: "Sponsor", label: "Sponsor" },
+  // { value: "Sponsor", label: "Sponsor" },
 ];
 
 const subRoles = {
@@ -19,11 +19,11 @@ const subRoles = {
     { value: "manager", label: "Manager" },
     // add more options here as needed
   ],
-  Sponsor: [
-    { value: "investor", label: "Investor" },
-    { value: "advisor", label: "Advisor" },
-    // add more options here as needed
-  ],
+  // Sponsor: [
+  //   { value: "investor", label: "Investor" },
+  //   { value: "advisor", label: "Advisor" },
+  //   // add more options here as needed
+  // ],
 };
 
 const SignUpPage = () => {

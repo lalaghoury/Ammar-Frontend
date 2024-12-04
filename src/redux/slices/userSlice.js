@@ -7,6 +7,7 @@ import { signin as signinAction } from "./authSlice";
 
 const initialState = {
   data: [],
+  singleUser: null,
   loading: false,
   error: null,
 };
@@ -62,6 +63,19 @@ export const userThunks = {
       }
     }
   ),
+  getUser: createAsyncThunk("user/getUser", async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${process.env.API_URL}/users/single/${id}`
+      );
+      if (data.success) {
+        return data.user;
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error.response.data);
+      return rejectWithValue(error.response.data.message);
+    }
+  }),
 };
 
 export const useUserEffect = (type) => {
@@ -119,6 +133,18 @@ const userSlice = createSlice({
         state.data = state.data.filter((user) => user._id !== action.payload);
       })
       .addCase(userThunks.deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        message.error(action.payload);
+      })
+      .addCase(userThunks.getUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(userThunks.getUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleUser = action.payload;
+      })
+      .addCase(userThunks.getUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         message.error(action.payload);

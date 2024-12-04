@@ -1,4 +1,3 @@
-import React from "react";
 import "./AppLayout.scss";
 
 const AppLayout = ({ children, className = "" }) => {

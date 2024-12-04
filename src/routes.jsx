@@ -17,29 +17,109 @@ import {
   AlreadyLoggedInRoute,
   MainLayout,
   ErrorPage,
+  IsSponsor,
+  IsStartup,
 } from "./comp";
+import StartupLayout from "./config/StartupLayout/StartupLayout";
+import SponsorLayout from "./config/SponsorLayout/SponsorLayout";
+import SponsorPage from "./pages/SponsorPage/SponsorPage";
+import SponsorProfile from "./components/SponsorList/SponsorProfile";
+import MessagesPage from "./components/Message/MessagesPage";
+import StartupProfile from "./components/startup/StartupProfile";
+import StartupPage from "./components/startup/StartupPage";
 
-export const router = (changeTheme) =>
+export const router = () =>
   createBrowserRouter([
     {
       path: "/",
-      element: <MainLayout changeTheme={changeTheme} />,
       errorElement: <ErrorPage />,
+      element: <MainLayout />,
       children: [
         {
           index: true,
           element: <HomePage />,
         },
         {
-          path: "/",
+          element: <AlreadyLoggedInRoute />,
+          children: [
+            {
+              path: "sign-up",
+              element: <SignUpPage />,
+            },
+            {
+              path: "sign-in",
+              element: <SignInPage />,
+            },
+            {
+              path: "auth/login/success",
+              element: <LoginSuccess />,
+            },
+            {
+              path: "forgot-password",
+              element: <ForgotPasswordPage />,
+            },
+            {
+              path: "reset-password/:resetToken",
+              element: <NewPasswordPage />,
+            },
+          ],
+        },
+        {
           element: <PrivateRoute />,
           children: [
             {
-              path: "/",
+              path: "profile",
+              element: <UserProfileLayout />,
+              children: [
+                {
+                  index: true,
+                  element: <MyInfo />,
+                },
+              ],
+            },
+            {
+              path: "startup",
+              element: <IsStartup />,
+              children: [
+                {
+                  element: <StartupLayout />,
+                  children: [
+                    {
+                      index: true,
+                      element: <StartupPage />,
+                    },
+                    {
+                      path: "sponsor/:id",
+                      element: <SponsorProfile />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "sponsor",
+              element: <IsSponsor />,
+              children: [
+                {
+                  element: <SponsorLayout />,
+                  children: [
+                    {
+                      index: true,
+                      element: <SponsorPage />,
+                    },
+                    {
+                      path: "startup/:id",
+                      element: <StartupProfile />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "admin",
               element: <IsAdmin />,
               children: [
                 {
-                  path: "/dashboard",
                   element: <AdminLayout />,
                   children: [
                     {
@@ -47,15 +127,7 @@ export const router = (changeTheme) =>
                       element: <AdminDashboard />,
                     },
                     {
-                      path: "users/all-users-list",
-                      element: <AllUsersList />,
-                    },
-                    {
-                      path: "users/add-user",
-                      element: <AllUsersList />,
-                    },
-                    {
-                      path: "users/details/:id",
+                      path: "users",
                       element: <AllUsersList />,
                     },
                   ],
@@ -63,40 +135,14 @@ export const router = (changeTheme) =>
               ],
             },
             {
-              path: "/profile",
-              element: <UserProfileLayout />,
+              path: "messages",
+              element: <MessagesPage />,
               children: [
                 {
-                  path: "/profile/my-info",
-                  element: <MyInfo />,
+                  path: ":id",
+                  element: <MessagesPage />,
                 },
               ],
-            },
-          ],
-        },
-        {
-          path: "/",
-          element: <AlreadyLoggedInRoute />,
-          children: [
-            {
-              path: "/sign-up",
-              element: <SignUpPage />,
-            },
-            {
-              path: "/sign-in",
-              element: <SignInPage />,
-            },
-            {
-              path: "/auth/login/success",
-              element: <LoginSuccess />,
-            },
-            {
-              path: "/forgot-password",
-              element: <ForgotPasswordPage />,
-            },
-            {
-              path: "/reset-password/:resetToken",
-              element: <NewPasswordPage />,
             },
           ],
         },

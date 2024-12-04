@@ -48,7 +48,7 @@ const SignInPage = () => {
     setIsSubmitting(true);
     const bool = await signin(values);
     if (bool) {
-      navigate("/");
+      navigate(bool);
     }
     setIsSubmitting(false);
   };

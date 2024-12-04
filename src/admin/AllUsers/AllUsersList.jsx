@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Tag, Image, Select, Spin, Modal } from "antd";
+import { Tag, Image, Select, Modal } from "antd";
 import Title from "antd/es/typography/Title";
 import {
   CheckCircleOutlined,
@@ -7,8 +7,9 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useUserEffect, userThunks } from "../../redux/slices/userSlice";
+import AdminTable from "../adminTable";
 
 const AllUsersList = () => {
   useUserEffect();
@@ -17,7 +18,6 @@ const AllUsersList = () => {
   const [status, setStatus] = useState(null);
   const dispatch = useDispatch();
   const { Option } = Select;
-  const { data: users, loading } = useSelector((state) => state.users);
 
   const handleUserUpdate = async (record) => {
     if (!role && !status) {
@@ -179,52 +179,6 @@ const AllUsersList = () => {
     },
   ];
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      name: record.name,
-    }),
-  };
-
-  return (
-    <Spin size="large" spinning={loading} tip="Loading...">
-      <div>
-        <Table
-          rowSelection={{
-            type: "checkbox",
-            ...rowSelection,
-          }}
-          columns={columns}
-          dataSource={users.map((userObj) => ({
-            key: userObj._id,
-            name: {
-              name: userObj.name,
-              avatar: userObj.avatar,
-              email: userObj.email,
-            },
-            email: userObj.email,
-            createdAt: new Intl.DateTimeFormat("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            }).format(new Date(userObj.createdAt)),
-            role: userObj.role,
-            status: userObj.status,
-            action_id: userObj._id,
-          }))}
-        />
-      </div>
-    </Spin>
-  );
+  return <AdminTable />;
 };
 export default AllUsersList;

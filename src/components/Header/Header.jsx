@@ -1,21 +1,32 @@
-import "./Header.scss";
-import { Logo, Buttons, ToggleTheme, Hamburger } from "./Navbar";
-import AppLayout from "../../config/AppLayout/AppLayout";
-import { useSelector } from "react-redux";
+import { BellOutlined, MailOutlined, SettingOutlined } from "@ant-design/icons";
+import { Buttons } from "./navigation";
 
-const HeaderUser = ({ changeTheme }) => {
-  const auth = useSelector((state) => state.auth);
+const Header = () => {
+  const userRole = window.location.pathname.split("/")[1];
 
   return (
-    <AppLayout className="!py-0">
-      <div className="header">
-        <Logo />
-        <ToggleTheme changeTheme={changeTheme} />
-        <Buttons />
-        <Hamburger />
+    <div className="w-full h-20 flex justify-between items-center px-6 py-4 bg-white shadow">
+      <div className="text-lg font-medium">
+        Welcome back,{" "}
+        <span className="font-bold capitalize">{userRole || "Startup"}</span>{" "}
+        <span>🌟</span>
       </div>
-    </AppLayout>
+      <div className="flex items-center space-x-6">
+        <button className="text-gray-600 hover:text-gray-800">
+          <SettingOutlined />
+        </button>
+        <button className="text-gray-600 hover:text-gray-800">
+          <MailOutlined />
+        </button>
+        <button className="text-gray-600 hover:text-gray-800">
+          <BellOutlined />
+        </button>
+        <div className="relative">
+          <Buttons />
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default HeaderUser;
+export default Header;

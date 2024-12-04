@@ -20,6 +20,8 @@ import MyInfo from "./pages/UserProfilePage/MyInfo";
 import PrivateRoute from "./Routes/Private";
 import LoginSuccess from "./Routes/LoginSuccess";
 import IsAdmin from "./Routes/IsAdmin";
+import IsSponsor from "./Routes/IsSponsor";
+import IsStartup from "./Routes/IsStartup";
 import AlreadyLoggedInRoute from "./Routes/AlreadyLoggedIn";
 
 // Components
@@ -44,6 +46,8 @@ export {
   MyInfo,
   LoginSuccess,
   IsAdmin,
+  IsSponsor,
+  IsStartup,
   AlreadyLoggedInRoute,
   MainLayout,
   ErrorPage,

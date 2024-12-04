@@ -26,7 +26,7 @@ export const useAuthActions = () => {
         const { user } = data;
         dispatch(signinAction({ user }));
         message.success(data.message);
-        return true;
+        return user.role === "Startup" ? "/startup" : "/sponsor";
       }
     } catch (error) {
       message.error(error.response.data.message || "Something went wrong");
