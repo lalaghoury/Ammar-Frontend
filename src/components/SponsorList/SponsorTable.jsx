@@ -2,11 +2,17 @@ import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./SponsorList.module.css";
 
-const SponsorTable = ({ sponsors, pagination }) => {
+const SponsorTable = ({ sponsors, pagination, prefix }) => {
   const navigate = useNavigate(); // React Router hook for navigation
 
   const handleRowDoubleClick = (record) => {
-    navigate(`/sponsor/${record.id}`); // Navigate to the dynamic route
+    if (!prefix || !record?.id) {
+      console.error("Invalid prefix or record data");
+      return;
+    }
+
+    const route = `/${prefix}/sponsor/${record.id}`;
+    navigate(route); // Navigate to the dynamic route
   };
 
   const columns = [

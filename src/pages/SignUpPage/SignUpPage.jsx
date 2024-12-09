@@ -1,16 +1,15 @@
 import { useState } from "react";
 import "./SignUpPage.scss";
 import AppLayout from "../../config/AppLayout/AppLayout";
-import GoogleSvg from "../../assets/images/Google.svg";
-import SignUpImage from "../../assets/images/signin.png";
+import SignUpImage from "../../assets/images/signup.png";
 import { Button, Checkbox, Form, Input, Space, Select, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { DiscordOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const roles = [
   { value: "Startup", label: "Startup" },
-  // { value: "Sponsor", label: "Sponsor" },
+  { value: "Sponsor", label: "Sponsor" },
 ];
 
 const subRoles = {
@@ -19,25 +18,17 @@ const subRoles = {
     { value: "manager", label: "Manager" },
     // add more options here as needed
   ],
-  // Sponsor: [
-  //   { value: "investor", label: "Investor" },
-  //   { value: "advisor", label: "Advisor" },
-  //   // add more options here as needed
-  // ],
+  Sponsor: [
+    { value: "investor", label: "Investor" },
+    { value: "advisor", label: "Advisor" },
+    // add more options here as needed
+  ],
 };
 
 const SignUpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [subRoleOptions, setSubRoleOptions] = useState([]);
   const navigate = useNavigate();
-
-  function discordSignIn() {
-    window.location.href = `${process.env.API_URL}/auth/discord`;
-  }
-
-  function googleSignIn() {
-    window.location.href = `${process.env.API_URL}/auth/google`;
-  }
 
   const handleRoleChange = (role) => {
     setSubRoleOptions(subRoles[role] || []);
@@ -85,25 +76,6 @@ const SignUpPage = () => {
               <p className="mb-20">
                 Sign up for free to access any of our products
               </p>
-              <div className="signup-btns">
-                <Button className="signup-btn" block onClick={googleSignIn}>
-                  <img
-                    src={GoogleSvg}
-                    alt="google img"
-                    style={{ width: "2rem", height: "2rem" }}
-                    className="mr-3"
-                  />
-                  <span>Continue With Google</span>
-                </Button>
-                <Button className="signup-btn" block onClick={discordSignIn}>
-                  <DiscordOutlined
-                    style={{ fontSize: "2rem", color: "#7289DA" }}
-                  />
-                  <span style={{ verticalAlign: "middle" }}>
-                    Continue With Discord
-                  </span>
-                </Button>
-              </div>
             </div>
 
             <div className="signup-form">

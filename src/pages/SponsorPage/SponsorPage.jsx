@@ -6,7 +6,11 @@ const SponsorPage = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <DashboardOverview overviewData={overviewData} />
-      <SponsorRequests data={sponsorsRequests} />
+      <SponsorRequests
+        data={sponsorsRequests}
+        prefix="startup"
+        pagination={{ pageSize: 5, total: 120 }}
+      />
     </div>
   );
 };

@@ -168,7 +168,7 @@ export const sponsorMenuItems = [
 export const adminMenuItems = [
   { key: "/admin", label: "Dashboard", icon: <HomeOutlined /> },
   {
-    key: "/users/all-users-list",
+    key: "/users",
     label: "User list",
     icon: <UsergroupAddOutlined />,
   },

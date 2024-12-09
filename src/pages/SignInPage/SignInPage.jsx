@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import "./SignInPage.scss";
 import AppLayout from "../../config/AppLayout/AppLayout";
-import GoogleSvg from "../../assets/images/Google.svg";
 import SignInImage from "../../assets/images/signup.png";
-import { Button, Divider, Form, Input, Space, message } from "antd";
+import { Button, Form, Input, Space, message } from "antd";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { DiscordOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useAuthActions } from "../../redux/slices/authSlice";
 
 const SignInPage = () => {
@@ -36,14 +35,6 @@ const SignInPage = () => {
     return () => clearTimeout(timer);
   }, [error]);
 
-  function discordSignIn() {
-    window.location.href = `${process.env.API_URL}/auth/discord`;
-  }
-
-  function googleSignIn() {
-    window.location.href = `${process.env.API_URL}/auth/google`;
-  }
-
   const onFinish = async (values) => {
     setIsSubmitting(true);
     const bool = await signin(values);
@@ -63,29 +54,7 @@ const SignInPage = () => {
           <div className="signin-main">
             <div className="signin-text">
               <h1 className="mb-50">Sign In Here</h1>
-              <div className="signup-btns">
-                <Button className="signup-btn" block onClick={googleSignIn}>
-                  <img
-                    src={GoogleSvg}
-                    alt="google img"
-                    style={{ width: "2rem", height: "2rem" }}
-                    className="mr-3"
-                  />
-                  <span>Continue With Google</span>
-                </Button>{" "}
-                <Button className="signup-btn" block onClick={discordSignIn}>
-                  <DiscordOutlined
-                    style={{ fontSize: "2rem", color: "#7289DA" }}
-                  />
-                  <span style={{ verticalAlign: "middle" }}>
-                    Continue With Discord
-                  </span>
-                </Button>{" "}
-              </div>
             </div>
-            <Divider orientation="center">
-              <span className="ant-divider-inner">OR</span>
-            </Divider>
 
             <div className="signin-form">
               <Form
@@ -108,6 +77,7 @@ const SignInPage = () => {
                 </Form.Item>
                 <Form.Item
                   name={"password"}
+                  label="Password"
                   rules={[
                     {
                       required: true,

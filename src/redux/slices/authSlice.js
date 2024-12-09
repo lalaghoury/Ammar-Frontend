@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { signin as signinAction, signout as signoutAction } from "./authSlice";
+import { getUrl } from "../../utils";
 
 const initialState = {
   user: null,
@@ -26,7 +27,7 @@ export const useAuthActions = () => {
         const { user } = data;
         dispatch(signinAction({ user }));
         message.success(data.message);
-        return user.role === "Startup" ? "/startup" : "/sponsor";
+        return getUrl(user.role);
       }
     } catch (error) {
       message.error(error.response.data.message || "Something went wrong");

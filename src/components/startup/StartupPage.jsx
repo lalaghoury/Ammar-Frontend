@@ -9,6 +9,7 @@ const StartupPage = () => {
       <SponsorList
         sponsors={sponsors}
         pagination={{ pageSize: 5, total: 120 }}
+        prefix="startup"
       />
     </div>
   );

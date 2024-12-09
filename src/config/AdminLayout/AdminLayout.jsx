@@ -56,12 +56,12 @@ const AdminLayout = () => {
               label: "Users",
               children: [
                 {
-                  key: "users/all-users-list",
+                  key: "users",
                   icon: <AppstoreAddOutlined />,
                   label: "All Users List",
                 },
                 {
-                  key: "users/add-user",
+                  key: "users",
                   icon: <PlusSquareOutlined />,
                   label: "Create User",
                 },

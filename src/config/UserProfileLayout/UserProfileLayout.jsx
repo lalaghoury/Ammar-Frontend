@@ -39,7 +39,7 @@ const UserProfileLayout = () => {
   };
 
   useEffect(() => {
-    const url = location.pathname.split("/")[2].split("-").join(" ");
+    const url = location?.pathname?.split("/")[2]?.split("-")?.join(" ");
     setWord(url);
   }, [location]);
 
@@ -79,30 +79,18 @@ const UserProfileLayout = () => {
           <Sider style={siderStyle} className="lg:!w-[25%] !w-[10%]">
             <CommonHeading text={`Hello ${auth?.user?.name.split(" ")[0]}`} />
             <Flex className="mt-30" vertical gap={20}>
-              <Link to={"/profile/my-info"}>
-                <Flex gap={15} className="h-11 items-center">
-                  <div
-                    style={{
-                      width: "2px",
-                      height: "44px",
-                      borderLeft: word
-                        ?.split(" ")[1]
-                        ?.toLowerCase()
-                        .includes("info")
-                        ? "2px solid #3C4242"
-                        : "",
-                      background: word
-                        ?.split(" ")[1]
-                        ?.toLowerCase()
-                        .includes("info")
-                        ? "#3C4242"
-                        : "",
-                    }}
-                  />
-                  <UserOutlined />
-                  My info
-                </Flex>
-              </Link>
+              <Flex gap={15} className="h-11 items-center">
+                <div
+                  style={{
+                    width: "2px",
+                    height: "44px",
+                    borderLeft: "2px solid #3C4242",
+                    background: "#3C4242",
+                  }}
+                />
+                <UserOutlined />
+                My info
+              </Flex>
               <span className="cursor" onClick={handleSignout}>
                 <Flex gap={15} className="h-11 items-center">
                   <div

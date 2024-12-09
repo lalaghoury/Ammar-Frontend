@@ -5,24 +5,19 @@ import {
   TwitterOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { userThunks } from "../../redux/slices/userSlice";
+// import { useParams } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useEffect } from "react";
+// import { userThunks } from "../../redux/slices/userSlice";
 
 const SponsorProfile = () => {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const { singleUser, loading } = useSelector((state) => state.users);
-  console.log(
-    "🚀 ~ SponsorProfile ~ singleUser, loading:",
-    singleUser,
-    loading
-  );
+  // const { id } = useParams();
+  // const dispatch = useDispatch();
+  // const { singleUser, loading } = useSelector((state) => state.users);
 
-  useEffect(() => {
-    dispatch(userThunks.getUser(id));
-  }, [dispatch, id]);
+  // useEffect(() => {
+  //   dispatch(userThunks.getUser(id));
+  // }, [dispatch, id]);
 
   return (
     <div className="flex flex-col lg:flex-row lg:gap-8 p-6 bg-gray-100 min-h-screen">

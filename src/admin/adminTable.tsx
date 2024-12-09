@@ -127,7 +127,7 @@ const AdminTable = () => {
             icon={<MessageOutlined />}
             type="default"
             size="small"
-            onClick={() => handleDelete(record._id)}
+            onClick={() => navigate(`/messages?id=${record._id}`)}
           />
           <Button
             icon={<EditOutlined />}

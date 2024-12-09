@@ -1,7 +1,20 @@
 import { Table, Button, DatePicker } from "antd";
 import { DeleteOutlined, CheckOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
-const SponsorRequests = ({ data }) => {
+const SponsorRequests = ({ data, pagination, prefix }) => {
+  const navigate = useNavigate(); // React Router hook for navigation
+
+  const handleRowDoubleClick = (record) => {
+    if (!prefix || !record?.id) {
+      console.error("Invalid prefix or record data");
+      return;
+    }
+
+    const route = `/${prefix}/startup/${record.id}`;
+    navigate(route); // Navigate to the dynamic route
+  };
+
   const columns = [
     {
       title: "S.no",
@@ -99,8 +112,12 @@ const SponsorRequests = ({ data }) => {
       <Table
         columns={columns}
         dataSource={data}
-        pagination={{ pageSize: 5, total: 120 }}
+        pagination={pagination}
+        prefix={prefix}
         rowKey="id"
+        onRow={(record) => ({
+          onDoubleClick: () => handleRowDoubleClick(record), // Handle double-click on a row
+        })}
       />
     </div>
   );

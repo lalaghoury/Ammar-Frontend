@@ -11,10 +11,6 @@ const LoginSuccess = () => {
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
-    const getTokenFromURL = () => {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('token');
-    };
     const getUser = async () => {
       try {
         const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);

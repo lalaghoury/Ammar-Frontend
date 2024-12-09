@@ -27,7 +27,7 @@ export const Buttons = () => {
           <Space size={12} align="center">
             <Button
               className="dis-fcc"
-              onClick={() => navigate("/profile/my-info")}
+              onClick={() => navigate("/profile")}
             >
               <Badge className="nav-badge">
                 <svg
