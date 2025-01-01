@@ -1,9 +1,9 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { message } from "antd";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { signin as signinAction } from "./authSlice";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { message } from 'antd';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { signin as signinAction } from './authSlice';
 
 const initialState = {
   data: [],
@@ -14,7 +14,7 @@ const initialState = {
 
 export const userThunks = {
   getAllUsers: createAsyncThunk(
-    "user/getAllUsers",
+    'user/getAllUsers',
     async (_, { rejectWithValue }) => {
       try {
         const { data } = await axios.get(
@@ -24,13 +24,13 @@ export const userThunks = {
           return data.users;
         }
       } catch (error) {
-        console.error("Error fetching users:", error.response.data);
+        console.error('Error fetching users:', error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
   updateUser: createAsyncThunk(
-    "user/updateUser",
+    'user/updateUser',
     async ({ values, url }, { dispatch, rejectWithValue }) => {
       try {
         const { data } = await axios.put(
@@ -43,13 +43,13 @@ export const userThunks = {
           return data.user;
         }
       } catch (error) {
-        console.error("Error Updating user:", error.response.data);
+        console.error('Error Updating user:', error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
   deleteUser: createAsyncThunk(
-    "user/deleteUser",
+    'user/deleteUser',
     async ({ url }, { rejectWithValue }) => {
       try {
         const { data } = await axios.delete(`${process.env.API_URL}${url}`);
@@ -58,12 +58,12 @@ export const userThunks = {
           return data.user._id;
         }
       } catch (error) {
-        console.error("Error deleting user:", error.response.data);
+        console.error('Error deleting user:', error.response.data);
         return rejectWithValue(error.response.data.message);
       }
     }
   ),
-  getUser: createAsyncThunk("user/getUser", async (id, { rejectWithValue }) => {
+  getUser: createAsyncThunk('user/getUser', async (id, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(
         `${process.env.API_URL}/users/single/${id}`
@@ -72,7 +72,7 @@ export const userThunks = {
         return data.user;
       }
     } catch (error) {
-      console.error("Error fetching user:", error.response.data);
+      console.error('Error fetching user:', error.response.data);
       return rejectWithValue(error.response.data.message);
     }
   }),
@@ -82,7 +82,7 @@ export const useUserEffect = (type) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (type === "get-user") {
+    if (type === 'get-user') {
       dispatch(userThunks.getPresentUser());
     } else {
       dispatch(userThunks.getAllUsers());
@@ -91,7 +91,7 @@ export const useUserEffect = (type) => {
 };
 
 const userSlice = createSlice({
-  name: "users",
+  name: 'users',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -151,7 +151,5 @@ const userSlice = createSlice({
       });
   },
 });
-
-export const {} = userSlice.actions;
 
 export default userSlice.reducer;

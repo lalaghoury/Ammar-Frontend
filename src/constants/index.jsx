@@ -141,27 +141,22 @@ export const adminCloumns = [
 
 export const startupMenuItems = [
   { key: "/startup", label: "Dashboard", icon: <HomeOutlined /> },
-  {
-    key: "/employees",
-    label: "Employee  Lists",
-    icon: <UsergroupAddOutlined />,
-  },
-  { key: "/requests", label: "Requests", icon: <FileOutlined /> },
+  { key: "/startup/requests", label: "My Requests", icon: <FileOutlined /> },
   { key: "/messages", label: "Message", icon: <MessageOutlined /> },
-  { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
+  // { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
   { key: "", label: "Logout", icon: <LogoutOutlined /> },
 ];
 
 export const sponsorMenuItems = [
   { key: "/sponsor", label: "Dashboard", icon: <HomeOutlined /> },
-  {
-    key: "/startups-list",
-    label: "StartUp Lists",
-    icon: <UsergroupAddOutlined />,
-  },
-  { key: "/requests", label: "Requests", icon: <FileOutlined /> },
+  // {
+  //   key: "/startups-list",
+  //   label: "StartUp Lists",
+  //   icon: <UsergroupAddOutlined />,
+  // },
+  // { key: "/requests", label: "Requests", icon: <FileOutlined /> },
   { key: "/messages", label: "Message", icon: <MessageOutlined /> },
-  { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
+  // { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
   { key: "", label: "Logout", icon: <LogoutOutlined /> },
 ];
 

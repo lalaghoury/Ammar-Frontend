@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from 'react-router-dom';
 import {
   SignUpPage,
   SignInPage,
@@ -19,19 +19,20 @@ import {
   ErrorPage,
   IsSponsor,
   IsStartup,
-} from "./comp";
-import StartupLayout from "./config/StartupLayout/StartupLayout";
-import SponsorLayout from "./config/SponsorLayout/SponsorLayout";
-import SponsorPage from "./pages/SponsorPage/SponsorPage";
-import SponsorProfile from "./components/SponsorList/SponsorProfile";
-import MessagesPage from "./components/Message/MessagesPage";
-import StartupProfile from "./components/startup/StartupProfile";
-import StartupPage from "./components/startup/StartupPage";
+} from './comp';
+import StartupLayout from './config/StartupLayout/StartupLayout';
+import SponsorLayout from './config/SponsorLayout/SponsorLayout';
+import SponsorPage from './pages/SponsorPage/SponsorPage';
+import SponsorProfile from './components/SponsorList/SponsorProfile';
+import MessagesPage from './components/Message/MessagesPage';
+import StartupProfile from './components/startup/StartupProfile';
+import StartupPage from './components/startup/StartupPage';
+import MyRequests from './components/SponsorList/MyRequests';
 
 export const router = () =>
   createBrowserRouter([
     {
-      path: "/",
+      path: '/',
       errorElement: <ErrorPage />,
       element: <MainLayout />,
       children: [
@@ -43,23 +44,23 @@ export const router = () =>
           element: <AlreadyLoggedInRoute />,
           children: [
             {
-              path: "sign-up",
+              path: 'sign-up',
               element: <SignUpPage />,
             },
             {
-              path: "sign-in",
+              path: 'sign-in',
               element: <SignInPage />,
             },
             {
-              path: "auth/login/success",
+              path: 'auth/login/success',
               element: <LoginSuccess />,
             },
             {
-              path: "forgot-password",
+              path: 'forgot-password',
               element: <ForgotPasswordPage />,
             },
             {
-              path: "reset-password/:resetToken",
+              path: 'reset-password/:resetToken',
               element: <NewPasswordPage />,
             },
           ],
@@ -68,7 +69,7 @@ export const router = () =>
           element: <PrivateRoute />,
           children: [
             {
-              path: "profile",
+              path: 'profile',
               element: <UserProfileLayout />,
               children: [
                 {
@@ -78,7 +79,7 @@ export const router = () =>
               ],
             },
             {
-              path: "startup",
+              path: 'startup',
               element: <IsStartup />,
               children: [
                 {
@@ -89,15 +90,19 @@ export const router = () =>
                       element: <StartupPage />,
                     },
                     {
-                      path: "sponsor/:id",
+                      path: 'sponsor/:id',
                       element: <SponsorProfile />,
+                    },
+                    {
+                      path: 'requests',
+                      element: <MyRequests />,
                     },
                   ],
                 },
               ],
             },
             {
-              path: "sponsor",
+              path: 'sponsor',
               element: <IsSponsor />,
               children: [
                 {
@@ -108,7 +113,7 @@ export const router = () =>
                       element: <SponsorPage />,
                     },
                     {
-                      path: "startup/:id",
+                      path: 'startup/:id',
                       element: <StartupProfile />,
                     },
                   ],
@@ -116,7 +121,7 @@ export const router = () =>
               ],
             },
             {
-              path: "admin",
+              path: 'admin',
               element: <IsAdmin />,
               children: [
                 {
@@ -127,7 +132,7 @@ export const router = () =>
                       element: <AdminDashboard />,
                     },
                     {
-                      path: "users",
+                      path: 'users',
                       element: <AllUsersList />,
                     },
                   ],
@@ -135,11 +140,11 @@ export const router = () =>
               ],
             },
             {
-              path: "messages",
+              path: 'messages',
               element: <MessagesPage />,
               children: [
                 {
-                  path: ":id",
+                  path: ':id',
                   element: <MessagesPage />,
                 },
               ],
@@ -147,7 +152,7 @@ export const router = () =>
           ],
         },
         {
-          path: "*",
+          path: '*',
           element: <PageNotFound />,
         },
       ],

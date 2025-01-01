@@ -1,13 +1,14 @@
-import { Table, Button } from "antd";
-import { useNavigate } from "react-router-dom";
-import styles from "./SponsorList.module.css";
+import { Table } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import styles from './SponsorList.module.css';
+import AddRequestModal from '../Modals/AddRequestModal';
 
 const SponsorTable = ({ sponsors, pagination, prefix }) => {
   const navigate = useNavigate(); // React Router hook for navigation
 
   const handleRowDoubleClick = (record) => {
     if (!prefix || !record?.id) {
-      console.error("Invalid prefix or record data");
+      console.error('Invalid prefix or record data');
       return;
     }
 
@@ -17,15 +18,15 @@ const SponsorTable = ({ sponsors, pagination, prefix }) => {
 
   const columns = [
     {
-      title: "S.no",
-      dataIndex: "id",
-      key: "id",
+      title: 'S.no',
+      dataIndex: 'id',
+      key: 'id',
       render: (text) => <span>{text}</span>,
     },
     {
-      title: "Sponsor Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Sponsor Name',
+      dataIndex: 'name',
+      key: 'name',
       render: (name, record) => (
         <div className={styles.sponsorName}>
           <img src={record.avatar} alt={name} className={styles.avatar} />
@@ -34,28 +35,26 @@ const SponsorTable = ({ sponsors, pagination, prefix }) => {
       ),
     },
     {
-      title: "Investment",
-      dataIndex: "investment",
-      key: "investment",
+      title: 'Investment',
+      dataIndex: 'investment',
+      key: 'investment',
+      render: () => <>{Math.floor(Math.random() * 50000)} PKR</>,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
-      title: "Contact No",
-      dataIndex: "contact",
-      key: "contact",
+      title: 'Contact No',
+      dataIndex: 'phone',
+      key: 'phone',
     },
     {
-      title: "",
-      key: "action",
-      render: () => (
-        <Button type="primary" className={styles.requestButton}>
-          Request Sponsor
-        </Button>
-      ),
+      title: 'Action',
+      key: 'action',
+      dataIndex: '_id',
+      render: (_id) => <AddRequestModal id={_id} />,
     },
   ];
 

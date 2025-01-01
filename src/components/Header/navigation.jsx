@@ -1,16 +1,16 @@
-import "./Header.scss";
-import { useSelector } from "react-redux";
-import LogoImg from "../../assets/images/logo.svg";
-import { Badge, Button, Menu, Space } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthEffect } from "../../redux/slices/authSlice";
-import React from "react";
+import './Header.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import LogoImg from '../../assets/images/logo.svg';
+import { Badge, Button, Menu, Space } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { authThunks, useAuthEffect } from '../../redux/slices/authSlice';
+import React from 'react';
 
 export const Logo = () => {
   const navigate = useNavigate();
   return (
     <div className="logo dis-fcc cursor-pointer">
-      <img src={LogoImg} alt="logo" onClick={() => navigate("/")} />
+      <img src={LogoImg} alt="logo" onClick={() => navigate('/')} />
     </div>
   );
 };
@@ -25,10 +25,7 @@ export const Buttons = () => {
       {auth.user ? (
         <div className="nav-btn-login">
           <Space size={12} align="center">
-            <Button
-              className="dis-fcc"
-              onClick={() => navigate("/profile")}
-            >
+            <Button className="dis-fcc" onClick={() => navigate('/profile')}>
               <Badge className="nav-badge">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -65,21 +62,29 @@ export const Buttons = () => {
 };
 
 export const Sidebar = ({ items, selectedKey, onMenuClick }) => {
+  const dispatch = useDispatch();
+
+  const handleSignout = async () => {
+    dispatch(authThunks.signout());
+  };
+
   return (
     <div className="h-full w-64 bg-[#F5F5F5] text-[#000000CC] shadow-lg">
       <Menu
         mode="inline"
         selectedKeys={[selectedKey]}
         onClick={onMenuClick}
-        className="h-full border-0  text-white"
+        className="h-full border-0 text-white"
       >
         {items.map((item) => (
           <Menu.Item
             key={item.key}
-            icon={React.cloneElement(item.icon, { className: "text-white" })}
+            icon={React.cloneElement(item.icon, { className: 'text-white' })}
             className="hover:text-blue-500 text-white font-medium"
           >
-            {item.label}
+            {item.key && <Link to={item.key}>{item.label}</Link>}
+
+            {!item.key && <span onClick={handleSignout}>{item.label}</span>}
           </Menu.Item>
         ))}
       </Menu>
