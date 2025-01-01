@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { Spin } from "antd";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { signin } from "../redux/slices/authSlice";
-import { useSelector } from "react-redux";
-import { signout } from "../redux/slices/authSlice";
+import { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { Spin } from 'antd';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { signin } from '../redux/slices/authSlice';
+import { useSelector } from 'react-redux';
+import { signout } from '../redux/slices/authSlice';
 
 export default function PrivateRoute() {
   const dispatch = useDispatch();
@@ -22,9 +22,9 @@ export default function PrivateRoute() {
           return;
         }
       } catch (error) {
-        console.error("Verification failed:", error.response.data.message);
+        console.error('Verification failed:', error.response.data.message);
         dispatch(signout());
-        navigate("sign-in", { replace: true });
+        navigate('/sign-in', { replace: true });
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ export default function PrivateRoute() {
       <Spin
         className="mt-[200px] w-screen"
         style={{
-          height: "calc(100vh - 200px)",
+          height: 'calc(100vh - 200px)',
         }}
       />
     );

@@ -37,10 +37,6 @@ export const router = () =>
       element: <MainLayout />,
       children: [
         {
-          index: true,
-          element: <HomePage />,
-        },
-        {
           element: <AlreadyLoggedInRoute />,
           children: [
             {
@@ -68,6 +64,10 @@ export const router = () =>
         {
           element: <PrivateRoute />,
           children: [
+            {
+              index: true,
+              element: <HomePage />,
+            },
             {
               path: 'profile',
               element: <UserProfileLayout />,
