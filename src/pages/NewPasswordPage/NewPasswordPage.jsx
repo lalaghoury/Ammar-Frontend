@@ -1,11 +1,12 @@
-import React from "react";
-import "./NewPasswordPage.scss";
-import AppLayout from "../../config/AppLayout/AppLayout";
-import NewPasswordImage from "../../assets/images/new-password.png";
-import { Button, Form, Input, message, Space } from "antd";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { LoadingOutlined } from "@ant-design/icons";
+import React from 'react';
+import './NewPasswordPage.scss';
+import AppLayout from '../../config/AppLayout/AppLayout';
+import NewPasswordImage from '../../assets/images/new-password.png';
+import { Button, Form, Input, message, Space } from 'antd';
+import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { LoadingOutlined } from '@ant-design/icons';
+import { API_URL } from '../../utils';
 
 const NewPasswordPage = () => {
   const [form] = Form.useForm();
@@ -15,12 +16,12 @@ const NewPasswordPage = () => {
   const onFinish = async (values) => {
     const { password, confirm } = values;
     if (password !== confirm) {
-      return message.error("Passwords do not match");
+      return message.error('Passwords do not match');
     }
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.API_URL}/auth/reset-password/${resetToken}`,
+        `${API_URL}/auth/reset-password/${resetToken}`,
         { password }
       );
       const data = await response.data;
@@ -28,7 +29,7 @@ const NewPasswordPage = () => {
       if (data.success) {
         setTimeout(() => {
           message.success(data.message);
-          navigate("/sign-in", { replace: true });
+          navigate('/sign-in', { replace: true });
         }, 2000);
       }
       setLoading(false);
@@ -61,19 +62,19 @@ const NewPasswordPage = () => {
               form={form}
             >
               <Form.Item
-                name={"password"}
+                name={'password'}
                 label="Password"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter your password!",
+                    message: 'Please enter your password!',
                   },
                   {
                     pattern: new RegExp(
-                      "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+                      '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
                     ),
                     message:
-                      "Please enter a strong password (with uppercase, lowercase, special characters and numbers)",
+                      'Please enter a strong password (with uppercase, lowercase, special characters and numbers)',
                   },
                 ]}
                 validateTrigger="onBlur"
@@ -84,22 +85,22 @@ const NewPasswordPage = () => {
               </Form.Item>
 
               <Form.Item
-                name={"confirm"}
+                name={'confirm'}
                 label="Confirm Password"
-                dependencies={["password"]}
+                dependencies={['password']}
                 rules={[
                   {
                     required: true,
-                    message: "Please confirm your password!",
+                    message: 'Please confirm your password!',
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue("password") === value) {
+                      if (!value || getFieldValue('password') === value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(
                         new Error(
-                          "New password and comfirm new password do not match!"
+                          'New password and comfirm new password do not match!'
                         )
                       );
                     },
@@ -119,7 +120,7 @@ const NewPasswordPage = () => {
                       Sending... <LoadingOutlined />
                     </Space>
                   ) : (
-                    "Reset Password"
+                    'Reset Password'
                   )}
                 </Button>
               </Form.Item>

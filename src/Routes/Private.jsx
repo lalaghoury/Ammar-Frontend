@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { signin } from '../redux/slices/authSlice';
 import { useSelector } from 'react-redux';
 import { signout } from '../redux/slices/authSlice';
+import { API_URL } from '../utils';
 
 export default function PrivateRoute() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export default function PrivateRoute() {
   useEffect(() => {
     const verifyLogin = async () => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
+        const { data } = await axios.get(`${API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));
           return;

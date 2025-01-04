@@ -1,10 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { message } from "antd";
-import axios from "axios";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { signin as signinAction, signout as signoutAction } from "./authSlice";
-import { getUrl } from "../../utils";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { message } from 'antd';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { signin as signinAction, signout as signoutAction } from './authSlice';
+import { API_URL, getUrl } from '../../utils';
 
 const initialState = {
   user: null,
@@ -19,10 +19,7 @@ export const useAuthActions = () => {
 
   const signin = async (values) => {
     try {
-      const { data } = await axios.post(
-        `${process.env.API_URL}/auth/signin`,
-        values
-      );
+      const { data } = await axios.post(`${API_URL}/auth/signin`, values);
       if (data.success) {
         const { user } = data;
         dispatch(signinAction({ user }));
@@ -30,16 +27,16 @@ export const useAuthActions = () => {
         return getUrl(user.role);
       }
     } catch (error) {
-      message.error(error.response.data.message || "Something went wrong");
+      message.error(error.response.data.message || 'Something went wrong');
       return false;
     }
   };
 
   const signout = async () => {
     try {
-      await axios.post(`${process.env.API_URL}/auth/signout`);
+      await axios.post(`${API_URL}/auth/signout`);
       dispatch(signoutAction());
-      message.success("Logged out successfully");
+      message.success('Logged out successfully');
     } catch (error) {
       message.error(error.response.data.message);
     }
@@ -49,16 +46,16 @@ export const useAuthActions = () => {
 };
 
 export const authThunks = {
-  signout: createAsyncThunk("auth/signout", async (_, { dispatch }) => {
+  signout: createAsyncThunk('auth/signout', async (_, { dispatch }) => {
     try {
-      const { data } = await axios.post(`${process.env.API_URL}/auth/signout`);
+      const { data } = await axios.post(`${API_URL}/auth/signout`);
       if (data.success) {
         dispatch(signoutAction());
-        window.location.href = "/sign-in";
+        window.location.href = '/sign-in';
         return true;
       }
     } catch (error) {
-      console.error("Error logging out:", error.response.data.message);
+      console.error('Error logging out:', error.response.data.message);
       throw error.response.data.message;
     }
   }),
@@ -68,7 +65,7 @@ export const useAuthEffect = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const auth = localStorage.getItem("auth");
+    const auth = localStorage.getItem('auth');
     if (auth) {
       const { user } = JSON.parse(auth);
       dispatch(signinAction({ user }));
@@ -77,7 +74,7 @@ export const useAuthEffect = () => {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     signin: (state, action) => {
@@ -94,7 +91,7 @@ const authSlice = createSlice({
         _id: data._id,
       };
       localStorage.setItem(
-        "auth",
+        'auth',
         JSON.stringify({
           user,
           isLoggedIn: true,
@@ -108,7 +105,7 @@ const authSlice = createSlice({
       });
     },
     signout: (state) => {
-      localStorage.removeItem("auth");
+      localStorage.removeItem('auth');
       Object.assign(state, initialState);
     },
   },

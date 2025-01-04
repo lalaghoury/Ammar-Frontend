@@ -99,24 +99,12 @@ const MyRequests = () => {
         <div className="flex items-center gap-2">
           {user.role === 'sponsor' && (
             <>
-              {record.status !== 'PENDING' && (
+              {record.status === 'APPROVED' && (
                 <Button
-                  icon={
-                    record.status === 'DECLINED' ? (
-                      <CheckOutlined />
-                    ) : (
-                      <CloseOutlined />
-                    )
-                  }
+                  icon={<CheckOutlined />}
                   type="primary"
-                  danger={record.status === 'APPROVED'}
                   size="small"
-                  onClick={() =>
-                    handlestatusChange(
-                      _id,
-                      record.status === 'DECLINED' ? 'APPROVED' : 'DECLINED'
-                    )
-                  }
+                  disabled
                 />
               )}
 
@@ -126,6 +114,17 @@ const MyRequests = () => {
                   type="primary"
                   size="small"
                   onClick={() => handlestatusChange(_id, 'APPROVED')}
+                />
+              )}
+
+              {record.status === 'DECLINED' && (
+                <Button
+                  icon={<CloseOutlined />}
+                  type="primary"
+                  danger
+                  disabled
+                  size="small"
+                  onClick={() => handlestatusChange(_id, 'PENDING')}
                 />
               )}
             </>

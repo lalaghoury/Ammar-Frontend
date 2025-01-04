@@ -3,6 +3,7 @@ import axios from 'axios';
 import { message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { API_URL } from '../../utils';
 
 const initialState = {
   data: [],
@@ -16,7 +17,7 @@ export const requestThunks = {
     'request/getAllRequest',
     async (_, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/requests/all`);
+        const { data } = await axios.get(`${API_URL}/requests/all`);
         if (data.success) {
           return data.requests;
         }
@@ -31,7 +32,7 @@ export const requestThunks = {
     async ({ values, id }, { rejectWithValue }) => {
       try {
         const { data } = await axios.put(
-          `${process.env.API_URL}/requests/update/${id}`,
+          `${API_URL}/requests/update/${id}`,
           values
         );
         if (data.success) {
@@ -48,9 +49,7 @@ export const requestThunks = {
     'request/deleteRequest',
     async ({ id }, { rejectWithValue }) => {
       try {
-        const { data } = await axios.delete(
-          `${process.env.API_URL}/requests/delete/${id}`
-        );
+        const { data } = await axios.delete(`${API_URL}/requests/delete/${id}`);
         if (data.success) {
           message.success(data.message);
           return data.request._id;
@@ -65,9 +64,7 @@ export const requestThunks = {
     'request/getRequest',
     async (id, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(
-          `${process.env.API_URL}/requests/single/${id}`
-        );
+        const { data } = await axios.get(`${API_URL}/requests/single/${id}`);
         if (data.success) {
           return data.request;
         }
@@ -82,10 +79,7 @@ export const requestThunks = {
     async ({ values }, { rejectWithValue }) => {
       console.log('🚀 ~ values:', values);
       try {
-        const { data } = await axios.post(
-          `${process.env.API_URL}/requests/create`,
-          values
-        );
+        const { data } = await axios.post(`${API_URL}/requests/create`, values);
         if (data.success) {
           message.success(data.message);
           return data.request;

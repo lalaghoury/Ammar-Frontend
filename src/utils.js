@@ -18,3 +18,17 @@ export const getRequestStatusColor = (status) => {
       return 'red';
   }
 };
+
+export const getAvatarForChat = (chat, user) => {
+  if (!chat) return '';
+
+  const { sponsor, startup } = chat;
+  const nameOfChat = user.role === 'sponsor' ? startup.name : sponsor.name;
+
+  return `https://ui-avatars.com/api/?name=${nameOfChat}`;
+};
+
+export const API_URL = process.env.API_URL;
+export const PUSHER_CLUSTER = process.env.PUSHER_CLUSTER;
+export const PUSHER_KEY = process.env.PUSHER_KEY;
+export const BASE_API_URL = process.env.BASE_API_URL;

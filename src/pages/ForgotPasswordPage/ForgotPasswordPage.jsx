@@ -7,6 +7,7 @@ import { Button, Flex, Form, Input, Space, message } from "antd";
 import { Link } from "react-router-dom";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { API_URL } from "../../utils";
 
 const ForgotPasswordPage = () => {
   const [isEmailSent, setIsEmailSent] = React.useState(false);
@@ -17,7 +18,7 @@ const ForgotPasswordPage = () => {
       setLoading(true);
       const { email } = values;
       const { data } = await axios.post(
-        `${process.env.API_URL}/auth/send-verification-link`,
+        `${API_URL}/auth/send-verification-link`,
         { email }
       );
       if (data.success) {

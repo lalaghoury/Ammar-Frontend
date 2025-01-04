@@ -4,6 +4,7 @@ import { message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { signin as signinAction } from './authSlice';
+import { API_URL } from '../../utils';
 
 const initialState = {
   data: [],
@@ -17,9 +18,7 @@ export const userThunks = {
     'user/getAllUsers',
     async (_, { rejectWithValue }) => {
       try {
-        const { data } = await axios.get(
-          `${process.env.API_URL}/users/admin/all`
-        );
+        const { data } = await axios.get(`${API_URL}/users/admin/all`);
         if (data.success) {
           return data.users;
         }
@@ -33,10 +32,7 @@ export const userThunks = {
     'user/updateUser',
     async ({ values, url }, { dispatch, rejectWithValue }) => {
       try {
-        const { data } = await axios.put(
-          `${process.env.API_URL}${url}`,
-          values
-        );
+        const { data } = await axios.put(`${API_URL}${url}`, values);
         if (data.success) {
           dispatch(signinAction({ user: data.user }));
           message.success(data.message);
@@ -52,7 +48,7 @@ export const userThunks = {
     'user/deleteUser',
     async ({ url }, { rejectWithValue }) => {
       try {
-        const { data } = await axios.delete(`${process.env.API_URL}${url}`);
+        const { data } = await axios.delete(`${API_URL}${url}`);
         if (data.success) {
           message.success(data.message);
           return data.user._id;
@@ -65,9 +61,7 @@ export const userThunks = {
   ),
   getUser: createAsyncThunk('user/getUser', async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(
-        `${process.env.API_URL}/users/single/${id}`
-      );
+      const { data } = await axios.get(`${API_URL}/users/single/${id}`);
       if (data.success) {
         return data.user;
       }

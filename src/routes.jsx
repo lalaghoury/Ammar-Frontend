@@ -40,6 +40,11 @@ export const router = () =>
           element: <AlreadyLoggedInRoute />,
           children: [
             {
+              index: true,
+              path: '/',
+              element: <HomePage />,
+            },
+            {
               path: 'sign-up',
               element: <SignUpPage />,
             },
@@ -64,10 +69,6 @@ export const router = () =>
         {
           element: <PrivateRoute />,
           children: [
-            {
-              index: true,
-              element: <HomePage />,
-            },
             {
               path: 'profile',
               element: <UserProfileLayout />,
@@ -97,6 +98,16 @@ export const router = () =>
                       path: 'requests',
                       element: <MyRequests />,
                     },
+                    {
+                      path: 'messages',
+                      element: <MessagesPage />,
+                      children: [
+                        {
+                          path: ':id',
+                          element: <MessagesPage />,
+                        },
+                      ],
+                    },
                   ],
                 },
               ],
@@ -115,6 +126,16 @@ export const router = () =>
                     {
                       path: 'startup/:id',
                       element: <StartupProfile />,
+                    },
+                    {
+                      path: 'messages',
+                      element: <MessagesPage />,
+                      children: [
+                        {
+                          path: ':id',
+                          element: <MessagesPage />,
+                        },
+                      ],
                     },
                   ],
                 },
@@ -139,16 +160,16 @@ export const router = () =>
                 },
               ],
             },
-            {
-              path: 'messages',
-              element: <MessagesPage />,
-              children: [
-                {
-                  path: ':id',
-                  element: <MessagesPage />,
-                },
-              ],
-            },
+            // {
+            //   path: 'messages',
+            //   element: <MessagesPage />,
+            //   children: [
+            //     {
+            //       path: ':id',
+            //       element: <MessagesPage />,
+            //     },
+            //   ],
+            // },
           ],
         },
         {

@@ -3,6 +3,7 @@ import styles from './SponsorList.module.css';
 import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../utils';
 
 const SponsorList = ({ prefix }) => {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const SponsorList = ({ prefix }) => {
   const fetchSponsors = async () => {
     try {
       const { data } = await axios.get(
-        `${process.env.API_URL}/users/sponsors/all`
+        `${API_URL}/users/sponsors/all`
       );
       if (data.success) {
         setUsers(data.users);

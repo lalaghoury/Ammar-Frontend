@@ -1,26 +1,27 @@
-import { useState } from "react";
-import "./SignUpPage.scss";
-import AppLayout from "../../config/AppLayout/AppLayout";
-import SignUpImage from "../../assets/images/signup.png";
-import { Button, Checkbox, Form, Input, Space, Select, message } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { LoadingOutlined } from "@ant-design/icons";
+import { useState } from 'react';
+import './SignUpPage.scss';
+import AppLayout from '../../config/AppLayout/AppLayout';
+import SignUpImage from '../../assets/images/signup.png';
+import { Button, Checkbox, Form, Input, Space, Select, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { LoadingOutlined } from '@ant-design/icons';
+import { API_URL } from '../../utils';
 
 const roles = [
-  { value: "Startup", label: "Startup" },
-  { value: "Sponsor", label: "Sponsor" },
+  { value: 'Startup', label: 'Startup' },
+  { value: 'Sponsor', label: 'Sponsor' },
 ];
 
 const subRoles = {
   Startup: [
-    { value: "employee", label: "Employee" },
-    { value: "manager", label: "Manager" },
+    { value: 'employee', label: 'Employee' },
+    { value: 'manager', label: 'Manager' },
     // add more options here as needed
   ],
   Sponsor: [
-    { value: "investor", label: "Investor" },
-    { value: "advisor", label: "Advisor" },
+    { value: 'investor', label: 'Investor' },
+    { value: 'advisor', label: 'Advisor' },
     // add more options here as needed
   ],
 };
@@ -43,17 +44,14 @@ const SignUpPage = () => {
       !values.role ||
       !values.sub_role
     ) {
-      return message.error("All fields are required");
+      return message.error('All fields are required');
     }
     try {
       setIsSubmitting(true);
-      const { data } = await axios.post(
-        `${process.env.API_URL}/auth/signup`,
-        values
-      );
+      const { data } = await axios.post(`${API_URL}/auth/signup`, values);
       if (data.success) {
         message.success(data.message, 1, () => {
-          navigate("/sign-in");
+          navigate('/sign-in');
         });
       }
     } catch (error) {
@@ -91,7 +89,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Name is required!",
+                      message: 'Name is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -105,7 +103,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Phone is required!",
+                      message: 'Phone is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -119,7 +117,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Email is required!",
+                      message: 'Email is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -133,7 +131,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Role is required!",
+                      message: 'Role is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -152,7 +150,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Sub Role is required!",
+                      message: 'Sub Role is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -171,7 +169,7 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Password is required!",
+                      message: 'Password is required!',
                     },
                   ]}
                   validateTrigger="onBlur"
@@ -185,18 +183,18 @@ const SignUpPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "You must agree to our privacy agreement",
+                      message: 'You must agree to our privacy agreement',
                     },
                   ]}
                   validateTrigger="onSubmit"
                 >
                   <Checkbox>
-                    Agree to our{" "}
-                    <Link className="link text-sec" to={"#"}>
+                    Agree to our{' '}
+                    <Link className="link text-sec" to={'#'}>
                       Terms of use
-                    </Link>{" "}
-                    and{" "}
-                    <Link className="link text-sec" to={"#"}>
+                    </Link>{' '}
+                    and{' '}
+                    <Link className="link text-sec" to={'#'}>
                       Privacy Policy
                     </Link>
                   </Checkbox>
@@ -219,12 +217,12 @@ const SignUpPage = () => {
                         Sending... <LoadingOutlined />
                       </Space>
                     ) : (
-                      "Sign Up"
+                      'Sign Up'
                     )}
                   </Button>
                   <div className="mt-5">
-                    Already have an account?{" "}
-                    <Link className="link text-sec" to={"/sign-in"}>
+                    Already have an account?{' '}
+                    <Link className="link text-sec" to={'/sign-in'}>
                       Log In
                     </Link>
                   </div>

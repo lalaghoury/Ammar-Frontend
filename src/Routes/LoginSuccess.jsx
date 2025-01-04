@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
-import { Spin } from "antd";
-import axios from "axios";
-import { signin } from "../redux/slices/authSlice";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Spin } from 'antd';
+import axios from 'axios';
+import { signin } from '../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../utils';
 
 const LoginSuccess = () => {
   const dispatch = useDispatch();
@@ -13,14 +14,14 @@ const LoginSuccess = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/auth/verify`);
+        const { data } = await axios.get(`${API_URL}/auth/verify`);
         if (data.success) {
           dispatch(signin({ user: data.user }));
-          window.location.href = "/";
+          window.location.href = '/';
         }
       } catch (error) {
         console.log(error.response.data.message);
-        navigate("/sign-in");
+        navigate('/sign-in');
       } finally {
         setLoading(false);
       }

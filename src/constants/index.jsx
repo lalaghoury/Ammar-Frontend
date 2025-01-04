@@ -142,7 +142,7 @@ export const adminCloumns = [
 export const startupMenuItems = [
   { key: "/startup", label: "Dashboard", icon: <HomeOutlined /> },
   { key: "/startup/requests", label: "My Requests", icon: <FileOutlined /> },
-  { key: "/messages", label: "Message", icon: <MessageOutlined /> },
+  { key: "/startup/messages", label: "Message", icon: <MessageOutlined /> },
   // { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
   { key: "", label: "Logout", icon: <LogoutOutlined /> },
 ];
@@ -155,7 +155,7 @@ export const sponsorMenuItems = [
   //   icon: <UsergroupAddOutlined />,
   // },
   // { key: "/requests", label: "Requests", icon: <FileOutlined /> },
-  { key: "/messages", label: "Message", icon: <MessageOutlined /> },
+  { key: "/sponsor/messages", label: "Message", icon: <MessageOutlined /> },
   // { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
   { key: "", label: "Logout", icon: <LogoutOutlined /> },
 ];
