@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { LoadingOutlined } from '@ant-design/icons';
 import { API_URL } from '../../utils';
-import VerificationCodeModal from '../../components/Modals/VerificationCodeModal';
 
 const roles = [
   { value: 'Startup', label: 'Startup' },
@@ -30,8 +29,6 @@ const subRoles = {
 const SignUpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [subRoleOptions, setSubRoleOptions] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleRoleChange = (role) => {
@@ -53,20 +50,15 @@ const SignUpPage = () => {
       setIsSubmitting(true);
       const { data } = await axios.post(`${API_URL}/auth/signup`, values);
       if (data.success) {
-        setEmail(values.email);
-        setIsModalVisible(true);
+        message.success(data.message, 1, () => {
+          navigate('/sign-in');
+        });
       }
     } catch (error) {
       message.error(error.response.data.message);
       console.log(error);
       setIsSubmitting(false);
     }
-  };
-
-  const handleVerificationSuccess = () => {
-    message.success('Account verified successfully!', 1, () => {
-      navigate('/sign-in');
-    });
   };
 
   return (
@@ -240,12 +232,6 @@ const SignUpPage = () => {
           </div>
         </div>
       </div>
-      <VerificationCodeModal
-        visible={isModalVisible}
-        email={email}
-        onSuccess={handleVerificationSuccess}
-        onCancel={() => setIsModalVisible(false)}
-      />
     </AppLayout>
   );
 };
