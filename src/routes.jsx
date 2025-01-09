@@ -19,6 +19,7 @@ import {
   ErrorPage,
   IsSponsor,
   IsStartup,
+  VerifyAccountPage,
 } from './comp';
 import StartupLayout from './config/StartupLayout/StartupLayout';
 import SponsorLayout from './config/SponsorLayout/SponsorLayout';
@@ -63,6 +64,10 @@ export const router = () =>
             {
               path: 'reset-password/:resetToken',
               element: <NewPasswordPage />,
+            },
+            {
+              path: 'verify-account',
+              element: <VerifyAccountPage />,
             },
           ],
         },
