@@ -163,12 +163,9 @@ export const sponsorMenuItems = [
 export const adminMenuItems = [
   { key: "/admin", label: "Dashboard", icon: <HomeOutlined /> },
   {
-    key: "/users",
+    key: "/admin/users",
     label: "User list",
     icon: <UsergroupAddOutlined />,
   },
-  { key: "/requests", label: "Requests", icon: <FileOutlined /> },
-  { key: "/messages", label: "Message", icon: <MessageOutlined /> },
-  { key: "/help", label: "Help", icon: <InfoCircleOutlined /> },
   { key: "", label: "Logout", icon: <LogoutOutlined /> },
 ];

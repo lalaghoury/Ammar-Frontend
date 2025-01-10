@@ -1,16 +1,11 @@
 import { useState } from "react";
 import "./AdminLayout.scss";
-import {
-  AppstoreAddOutlined,
-  DashboardOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  PlusSquareOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, Button, theme } from "antd";
+import { Layout, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
-const { Header, Sider, Content } = Layout;
+import { Logo, Sidebar } from "../../components/Header/navigation";
+import { adminMenuItems } from "../../constants";
+import { Header } from "../../comp";
+const { Sider, Content } = Layout;
 
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -20,74 +15,28 @@ const AdminLayout = () => {
   } = theme.useToken();
   const navigate = useNavigate();
 
+  const handleMenuClick = (e) => {
+    setSelectedKey(e.key);
+    console.log('Menu clicked:', e.key);
+  };
+
+
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div
-          className="logo2 dis-fcc cursor"
-          onClick={() => (window.location.href = "/")}
-        >
-          <h2>
-            <span className="lg-logo cursor">Euphoria</span>
-            <span className="sm-logo cursor">Eu</span>
-          </h2>
+        <div className="flex items-center justify-center mb-5">
+          <Logo />
         </div>
 
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={[selectedKey === "dashboard" ? "" : selectedKey]}
-          onClick={({ key }) => {
-            if (key === "signout") {
-            } else {
-              setSelectedKey(key);
-              navigate(key);
-            }
-          }}
-          items={[
-            {
-              key: "",
-              icon: <DashboardOutlined />,
-              label: "Dashboard",
-            },
-            {
-              key: "users",
-              icon: <UserOutlined />,
-              label: "Users",
-              children: [
-                {
-                  key: "users",
-                  icon: <AppstoreAddOutlined />,
-                  label: "All Users List",
-                },
-                {
-                  key: "users",
-                  icon: <PlusSquareOutlined />,
-                  label: "Create User",
-                },
-              ],
-            },
-          ]}
+        <Sidebar
+          items={adminMenuItems}
+          selectedKey={selectedKey}
+          onMenuClick={handleMenuClick}
         />
       </Sider>
+
       <Layout>
-        <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
-        </Header>
+        <Header />
         <Content
           style={{
             margin: "24px 16px",

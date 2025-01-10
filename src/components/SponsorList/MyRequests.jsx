@@ -139,6 +139,9 @@ const MyRequests = () => {
   return (
     <Spin spinning={loading}>
       <div className="bg-white p-6 rounded shadow">
+        <Title level={3}>My Requests</Title>
+
+        {/* Search Bar and Date Picker */}
         <div className="flex justify-between mb-4">
           {/* Search Bar */}
           <input
