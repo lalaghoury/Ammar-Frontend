@@ -54,6 +54,9 @@ const SignInPage = () => {
           <div className="signin-main">
             <div className="signin-text">
               <h1 className="mb-50">Sign In Here</h1>
+              <p className="mb-20">
+                Sign in to access your account and manage your projects
+              </p>
             </div>
 
             <div className="signin-form">

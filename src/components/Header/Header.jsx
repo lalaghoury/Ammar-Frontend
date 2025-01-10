@@ -1,17 +1,23 @@
 import { BellOutlined, MailOutlined, SettingOutlined } from "@ant-design/icons";
-import { Buttons } from "./navigation";
+import { Buttons, Logo } from "./navigation";
 
 const Header = () => {
   const userRole = window.location.pathname.split("/")[1];
 
   return (
-    <div className="w-full h-20 flex justify-between items-center px-6 py-4 bg-white shadow">
-      <div className="text-lg font-medium">
-        Welcome back,{" "}
-        <span className="font-bold capitalize">{userRole || "Startup"}</span>{" "}
-        <span>🌟</span>
+    <header className="header">
+      <Logo />
+      <div className="search">
+        <input type="text" placeholder="Search..." />
+        <button>Search</button>
       </div>
-      <div className="flex items-center space-x-6">
+      <nav className="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/services">Services</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <div className="nav-btns">
         <button className="text-gray-600 hover:text-gray-800">
           <SettingOutlined />
         </button>
@@ -25,7 +31,23 @@ const Header = () => {
           <Buttons />
         </div>
       </div>
-    </div>
+      <div className="hamburger">
+        <input type="checkbox" id="menu-toggle" />
+        <label htmlFor="menu-toggle" className="menu-icon">
+          <span className="navicon"></span>
+        </label>
+        <div className="nav-dropdown">
+          <div id="close">X</div>
+          <div className="dropdown-body">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+            <Buttons />
+          </div>
+        </div>
+      </div>
+    </header>
   );
 };
 
